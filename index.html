@@ -15,12 +15,7 @@
     --accent3: #f43f5e;
     --text: #e2e8f0;
     --muted: #64748b;
-    --nc: #10b981;
-    --ne: #3b82f6;
-    --nw: #8b5cf6;
-    --se: #f59e0b;
-    --ss: #06b6d4;
-    --sw: #f43f5e;
+    --sidebar-width: 280px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -28,6 +23,7 @@
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
+    display: flex;
     overflow-x: hidden;
   }
 
@@ -39,6 +35,86 @@
     pointer-events: none; z-index: 1000; opacity: 0.6;
   }
 
+  /* --- Sidebar Styles --- */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--surface);
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 30px 20px;
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+  }
+
+  .sidebar-header {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-logo {
+    width: 16px; height: 16px;
+    background: var(--accent);
+    border-radius: 4px;
+  }
+
+  .search-box {
+    position: relative;
+    margin-bottom: 30px;
+  }
+  .search-input {
+    width: 100%;
+    padding: 12px 15px;
+    background: var(--bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+  }
+  .search-input:focus { outline: 1px solid var(--accent); }
+
+  .nav-group { margin-bottom: 30px; }
+  .nav-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s;
+  }
+  .nav-item:hover, .nav-item.active { background: var(--surface2); color: #fff; }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* --- Main Content Container --- */
+  .main-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+  }
+
+  /* --- Original Styles (Adjusted for main-content) --- */
   header {
     padding: 60px 60px 40px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -65,7 +141,7 @@
   }
   h1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(36px, 5vw, 72px);
+    font-size: clamp(36px, 5vw, 64px);
     letter-spacing: 3px;
     line-height: 1;
     color: #fff;
@@ -75,6 +151,7 @@
     color: var(--muted);
     font-size: 13px;
     font-weight: 300;
+    max-width: 600px;
   }
   .total-badge {
     display: inline-flex;
@@ -294,42 +371,61 @@
 </head>
 <body>
 
-<header>
-  <div class="header-label">Nominal Roll Analysis · February 27, 2026</div>
-  <h1>NAFDAC Staff<br>Distribution</h1>
-  <div class="header-sub">National Agency for Food and Drug Administration & Control — Plot 2032 Olusegun Obasanjo Way, Wuse Zone 7, Abuja</div>
-  <div class="total-badge">
-    <strong id="totalCount">—</strong>
-    <span>Total Staff on Roll</span>
-  </div>
-</header>
-
-<div class="main">
-  <div class="section-title">Geopolitical Zone Breakdown</div>
-  <div class="zones-grid" id="zonesGrid"></div>
-
-  <div class="section-title">All States of Origin</div>
-  <div class="states-container">
-    <div class="states-header">
-      <h3>State-by-State Distribution</h3>
-      <span style="font-size:12px;color:var(--muted);">36 States + FCT — 2,038 Total Staff</span>
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="brand-logo"></div>
+        NAFDAC
     </div>
-    <div class="states-body">
-      <div class="all-states-grid" id="statesGrid"></div>
+    <div class="search-box">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search States...">
     </div>
-  </div>
-
-  <div class="bubble-section">
-    <div class="bubble-title">Visual Proportional Map — Staff Count by State</div>
-    <canvas id="bubbleCanvas"></canvas>
-    <div class="legend" id="legend"></div>
-  </div>
+    <div class="nav-group">
+        <div class="nav-title">Geopolitical Zones</div>
+        <button class="nav-item active" onclick="filterData('all')">
+            <div class="nav-dot" style="background:#fff"></div>
+            All Zones
+        </button>
+        <div id="zoneNavList"></div>
+    </div>
 </div>
 
-<footer>
-  <span>NAFDAC NOMINAL ROLL — 27 FEB 2026</span>
-  <span>STAFF DISTRIBUTION ANALYSIS</span>
-</footer>
+<div class="main-content">
+    <header>
+      <div class="header-label">Nominal Roll Analysis · February 27, 2026</div>
+      <h1>NAFDAC Staff<br>Distribution</h1>
+      <div class="header-sub">National Agency for Food and Drug Administration & Control — Plot 2032 Olusegun Obasanjo Way, Wuse Zone 7, Abuja</div>
+      <div class="total-badge">
+        <strong id="totalCount">—</strong>
+        <span>Total Staff on Roll</span>
+      </div>
+    </header>
+
+    <div class="main">
+      <div class="section-title">Geopolitical Zone Breakdown</div>
+      <div class="zones-grid" id="zonesGrid"></div>
+
+      <div class="section-title">State-by-State Breakdown</div>
+      <div class="states-container">
+        <div class="states-header">
+          <h3 id="statesContainerTitle">All States</h3>
+        </div>
+        <div class="states-body">
+          <div class="all-states-grid" id="statesGrid"></div>
+        </div>
+      </div>
+
+      <div class="bubble-section">
+        <div class="bubble-title">Visual Proportional Map — Staff Count by State</div>
+        <canvas id="bubbleCanvas"></canvas>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+
+    <footer>
+      <span>NAFDAC NOMINAL ROLL — 27 FEB 2026</span>
+      <span>STAFF DISTRIBUTION ANALYSIS</span>
+    </footer>
+</div>
 
 <script>
 const zoneColors = {
@@ -342,52 +438,33 @@ const zoneColors = {
 };
 
 const stateMap = {
-  'ABI': { name: 'Abia', zone: 'South East' },
-  'ABJ': { name: 'FCT (Abuja)', zone: 'North Central' },
-  'ADA': { name: 'Adamawa', zone: 'North East' },
-  'AKW': { name: 'Akwa Ibom', zone: 'South South' },
-  'ANA': { name: 'Anambra', zone: 'South East' },
-  'BAU': { name: 'Bauchi', zone: 'North East' },
-  'BAY': { name: 'Bayelsa', zone: 'South South' },
-  'BEN': { name: 'Benue', zone: 'North Central' },
-  'BOR': { name: 'Borno', zone: 'North East' },
-  'CRO': { name: 'Cross River', zone: 'South South' },
-  'DEL': { name: 'Delta', zone: 'South South' },
-  'EBO': { name: 'Ebonyi', zone: 'South East' },
-  'EDO': { name: 'Edo', zone: 'South South' },
-  'EKI': { name: 'Ekiti', zone: 'South West' },
-  'ENU': { name: 'Enugu', zone: 'South East' },
-  'GOM': { name: 'Gombe', zone: 'North East' },
-  'IMO': { name: 'Imo', zone: 'South East' },
-  'JIG': { name: 'Jigawa', zone: 'North West' },
-  'KAD': { name: 'Kaduna', zone: 'North West' },
-  'KAN': { name: 'Kano', zone: 'North West' },
-  'KAT': { name: 'Katsina', zone: 'North West' },
-  'KEB': { name: 'Kebbi', zone: 'North West' },
-  'KOG': { name: 'Kogi', zone: 'North Central' },
-  'KWA': { name: 'Kwara', zone: 'North Central' },
-  'LAG': { name: 'Lagos', zone: 'South West' },
-  'NAS': { name: 'Nasarawa', zone: 'North Central' },
-  'NIG': { name: 'Niger', zone: 'North Central' },
-  'OGU': { name: 'Ogun', zone: 'South West' },
-  'OND': { name: 'Ondo', zone: 'South West' },
-  'OSU': { name: 'Osun', zone: 'South West' },
-  'OYO': { name: 'Oyo', zone: 'South West' },
-  'PLA': { name: 'Plateau', zone: 'North Central' },
-  'RIV': { name: 'Rivers', zone: 'South South' },
-  'SOK': { name: 'Sokoto', zone: 'North West' },
-  'TAR': { name: 'Taraba', zone: 'North East' },
-  'YOB': { name: 'Yobe', zone: 'North East' },
+  'ABI': { name: 'Abia', zone: 'South East' }, 'ABJ': { name: 'FCT (Abuja)', zone: 'North Central' },
+  'ADA': { name: 'Adamawa', zone: 'North East' }, 'AKW': { name: 'Akwa Ibom', zone: 'South South' },
+  'ANA': { name: 'Anambra', zone: 'South East' }, 'BAU': { name: 'Bauchi', zone: 'North East' },
+  'BAY': { name: 'Bayelsa', zone: 'South South' }, 'BEN': { name: 'Benue', zone: 'North Central' },
+  'BOR': { name: 'Borno', zone: 'North East' }, 'CRO': { name: 'Cross River', zone: 'South South' },
+  'DEL': { name: 'Delta', zone: 'South South' }, 'EBO': { name: 'Ebonyi', zone: 'South East' },
+  'EDO': { name: 'Edo', zone: 'South South' }, 'EKI': { name: 'Ekiti', zone: 'South West' },
+  'ENU': { name: 'Enugu', zone: 'South East' }, 'GOM': { name: 'Gombe', zone: 'North East' },
+  'IMO': { name: 'Imo', zone: 'South East' }, 'JIG': { name: 'Jigawa', zone: 'North West' },
+  'KAD': { name: 'Kaduna', zone: 'North West' }, 'KAN': { name: 'Kano', zone: 'North West' },
+  'KAT': { name: 'Katsina', zone: 'North West' }, 'KEB': { name: 'Kebbi', zone: 'North West' },
+  'KOG': { name: 'Kogi', zone: 'North Central' }, 'KWA': { name: 'Kwara', zone: 'North Central' },
+  'LAG': { name: 'Lagos', zone: 'South West' }, 'NAS': { name: 'Nasarawa', zone: 'North Central' },
+  'NIG': { name: 'Niger', zone: 'North Central' }, 'OGU': { name: 'Ogun', zone: 'South West' },
+  'OND': { name: 'Ondo', zone: 'South West' }, 'OSU': { name: 'Osun', zone: 'South West' },
+  'OYO': { name: 'Oyo', zone: 'South West' }, 'PLA': { name: 'Plateau', zone: 'North Central' },
+  'RIV': { name: 'Rivers', zone: 'South South' }, 'SOK': { name: 'Sokoto', zone: 'North West' },
+  'TAR': { name: 'Taraba', zone: 'North East' }, 'YOB': { name: 'Yobe', zone: 'North East' },
   'ZAM': { name: 'Zamfara', zone: 'North West' },
 };
 
-// Actual computed data from the Excel file
 const stateCounts = {"ABI":42,"ABJ":19,"ADA":62,"AKW":62,"ANA":119,"BAU":31,"BAY":27,"BEN":91,"BOR":69,"CRO":51,"DEL":86,"EBO":45,"EDO":79,"EKI":42,"ENU":68,"GOM":45,"IMO":100,"JIG":34,"KAD":66,"KAN":47,"KAT":43,"KEB":40,"KOG":101,"KWA":75,"LAG":43,"NAS":46,"NIG":44,"OGU":46,"OND":46,"OSU":66,"OYO":57,"PLA":56,"RIV":42,"SOK":34,"TAR":45,"YOB":30,"ZAM":39};
 
-// Compute totals
+// --- Initialization ---
 const total = Object.values(stateCounts).reduce((a,b)=>a+b,0);
+document.getElementById('totalCount').textContent = total.toLocaleString();
 
-// Compute zone data
 const zoneData = {};
 for (const [code, cnt] of Object.entries(stateCounts)) {
   const info = stateMap[code];
@@ -396,79 +473,16 @@ for (const [code, cnt] of Object.entries(stateCounts)) {
   zoneData[info.zone].count += cnt;
   zoneData[info.zone].states.push({ code, name: info.name, count: cnt });
 }
-// Sort states within zones
-for (const z of Object.values(zoneData)) z.states.sort((a,b)=>b.count-a.count);
 
-const zoneOrder = ['South West','South South','South East','North Central','North West','North East'];
-const maxZone = Math.max(...Object.values(zoneData).map(z=>z.count));
-const maxState = Math.max(...Object.values(stateCounts));
-
-document.getElementById('totalCount').textContent = total.toLocaleString();
-
-// Build zones grid
-const zonesGrid = document.getElementById('zonesGrid');
-for (const zoneName of zoneOrder) {
-  const zd = zoneData[zoneName];
-  const color = zoneColors[zoneName];
-  const pct = ((zd.count/total)*100).toFixed(1);
-  const barW = ((zd.count/maxZone)*100).toFixed(1);
-
-  const card = document.createElement('div');
-  card.className = 'zone-card';
-  card.style.cssText = `--zone-color:${color}`;
-
-  const statesHTML = zd.states.map(s => {
-    const sw = ((s.count/zd.count)*100).toFixed(1);
-    return `<div class="state-row">
-      <span class="state-code">${s.code}</span>
-      <span class="state-name">${s.name}</span>
-      <div class="state-mini-track"><div class="state-mini-fill" style="--state-bar-width:${sw}%"></div></div>
-      <span class="state-num">${s.count}</span>
-    </div>`;
-  }).join('');
-
-  card.innerHTML = `
-    <div class="zone-accent-bg"></div>
-    <div class="zone-header">
-      <div class="zone-name">${zoneName.replace(' (','\n(')}</div>
-      <div>
-        <div class="zone-count">${zd.count}</div>
-        <div class="zone-pct">${pct}% of total</div>
-      </div>
-    </div>
-    <div class="zone-bar-track"><div class="zone-bar-fill" style="--bar-width:${barW}%"></div></div>
-    <div class="zone-states">${statesHTML}</div>
-  `;
-  zonesGrid.appendChild(card);
-}
-
-// Build states grid
-const statesGrid = document.getElementById('statesGrid');
-const sortedStates = Object.entries(stateCounts).sort((a,b)=>b[1]-a[1]);
-for (const [code, count] of sortedStates) {
-  const info = stateMap[code];
-  if (!info) continue;
-  const color = zoneColors[info.zone];
-  const sw = ((count/maxState)*100).toFixed(1);
-  const zonePct = ((count/zoneData[info.zone].count)*100).toFixed(1);
-
-  const card = document.createElement('div');
-  card.className = 'state-card';
-  card.style.cssText = `--zone-color:${color}`;
-  card.innerHTML = `
-    <div class="state-card-name">${code}</div>
-    <div class="state-card-full">${info.name}</div>
-    <div class="state-card-top">
-      <div class="state-card-count">${count}</div>
-      <div style="text-align:right">
-        <div class="state-card-zone">${info.zone}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">${zonePct}% of zone</div>
-      </div>
-    </div>
-    <div class="state-card-bar-track"><div class="state-card-bar-fill" style="--state-bar-width:${sw}%"></div></div>
-  `;
-  statesGrid.appendChild(card);
-}
+// Populate Sidebar
+const zoneNavList = document.getElementById('zoneNavList');
+Object.keys(zoneColors).forEach(zone => {
+    const btn = document.createElement('button');
+    btn.className = 'nav-item';
+    btn.innerHTML = `<div class="nav-dot" style="background:${zoneColors[zone]}"></div> ${zone}`;
+    btn.onclick = () => filterData(zone, btn);
+    zoneNavList.appendChild(btn);
+});
 
 // Legend
 const legend = document.getElementById('legend');
@@ -476,77 +490,192 @@ for (const [zone, color] of Object.entries(zoneColors)) {
   legend.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div><span>${zone}</span></div>`;
 }
 
-// Bubble canvas
-const canvas = document.getElementById('bubbleCanvas');
-function drawBubbles() {
-  const W = canvas.parentElement.clientWidth - 60;
-  const H = Math.min(400, W * 0.55);
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, W, H);
+// --- Data Filtering Logic ---
+function filterData(zoneName, element) {
+    // Update Active Nav
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    if(element) element.classList.add('active');
+    else document.querySelector('.nav-item').classList.add('active');
 
-  // Arrange bubbles in a packed layout — simple grid-ish placement
-  const items = sortedStates.map(([code, count]) => ({
-    code,
-    name: stateMap[code]?.name || code,
-    count,
-    zone: stateMap[code]?.zone || '',
-    color: zoneColors[stateMap[code]?.zone] || '#fff',
-    r: Math.sqrt(count / maxState) * (W < 600 ? 38 : 55),
-  }));
-
-  // Simple circle packing: place in rows
-  const padding = 4;
-  let x = 0, y = 0, rowH = 0;
-  for (const item of items) {
-    if (x + item.r * 2 + padding > W) { x = 0; y += rowH + padding; rowH = 0; }
-    item.cx = x + item.r;
-    item.cy = y + item.r;
-    x += item.r * 2 + padding;
-    rowH = Math.max(rowH, item.r * 2);
-  }
-
-  // Resize canvas height to fit
-  const newH = y + rowH + 10;
-  canvas.height = newH;
-
-  for (const item of items) {
-    const { cx, cy, r, color } = item;
-    // Glow
-    const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-    grd.addColorStop(0, color + '40');
-    grd.addColorStop(1, color + '08');
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.fillStyle = grd;
-    ctx.fill();
-    // Circle border
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.strokeStyle = color + '80';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    // Label
-    if (r > 16) {
-      ctx.fillStyle = '#fff';
-      ctx.font = `bold ${Math.max(8, Math.min(11, r * 0.32))}px DM Sans`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(item.code, cx, cy - r * 0.15);
-      ctx.font = `${Math.max(7, Math.min(10, r * 0.26))}px DM Sans`;
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.fillText(item.count, cx, cy + r * 0.22);
-    }
-  }
+    // Update Title
+    document.getElementById('statesContainerTitle').textContent = zoneName === 'all' ? 'All States' : zoneName + ' States';
+    
+    renderGrid(zoneName);
+    drawBubbles(zoneName);
 }
-drawBubbles();
-window.addEventListener('resize', drawBubbles);
 
-// Animate bars
-setTimeout(() => {
-  document.querySelectorAll('.zone-bar-fill, .state-mini-fill, .state-card-bar-fill').forEach(el => el.classList.add('animated'));
-}, 300);
+// --- Render Logic ---
+function renderGrid(filterZone) {
+    const zonesGrid = document.getElementById('zonesGrid');
+    const statesGrid = document.getElementById('statesGrid');
+    zonesGrid.innerHTML = '';
+    statesGrid.innerHTML = '';
+
+    const maxZone = Math.max(...Object.values(zoneData).map(z=>z.count));
+    const maxState = Math.max(...Object.values(stateCounts));
+
+    // Render Zone Cards
+    const zonesToRender = filterZone === 'all' ? Object.keys(zoneColors) : [filterZone];
+    
+    zonesToRender.forEach(zoneName => {
+        const zd = zoneData[zoneName];
+        const color = zoneColors[zoneName];
+        const pct = ((zd.count/total)*100).toFixed(1);
+        const barW = ((zd.count/maxZone)*100).toFixed(1);
+        
+        const card = document.createElement('div');
+        card.className = 'zone-card';
+        card.style.cssText = `--zone-color:${color}`;
+        
+        const statesHTML = zd.states.sort((a,b)=>b.count-a.count).map(s => {
+            const sw = ((s.count/zd.count)*100).toFixed(1);
+            return `<div class="state-row">
+                <span class="state-code">${s.code}</span>
+                <span class="state-name">${s.name}</span>
+                <div class="state-mini-track"><div class="state-mini-fill" style="--state-bar-width:${sw}%"></div></div>
+                <span class="state-num">${s.count}</span>
+            </div>`;
+        }).join('');
+
+        card.innerHTML = `
+            <div class="zone-accent-bg"></div>
+            <div class="zone-header">
+                <div class="zone-name">${zoneName.replace(' (','\n(')}</div>
+                <div>
+                    <div class="zone-count">${zd.count}</div>
+                    <div class="zone-pct">${pct}% of total</div>
+                </div>
+            </div>
+            <div class="zone-bar-track"><div class="zone-bar-fill" style="--bar-width:${barW}%"></div></div>
+            <div class="zone-states">${statesHTML}</div>
+        `;
+        zonesGrid.appendChild(card);
+    });
+
+    // Render State Cards
+    let statesToRender = [];
+    if(filterZone === 'all') {
+        statesToRender = Object.entries(stateCounts).sort((a,b)=>b[1]-a[1]);
+    } else {
+        statesToRender = zoneData[filterZone].states.sort((a,b)=>b.count-a.count).map(s => [s.code, s.count]);
+    }
+
+    statesToRender.forEach(([code, count]) => {
+        const info = stateMap[code];
+        const color = zoneColors[info.zone];
+        const sw = ((count/maxState)*100).toFixed(1);
+        const zonePct = ((count/zoneData[info.zone].count)*100).toFixed(1);
+        
+        const card = document.createElement('div');
+        card.className = 'state-card';
+        card.style.cssText = `--zone-color:${color}`;
+        card.innerHTML = `
+            <div class="state-card-name">${code}</div>
+            <div class="state-card-full">${info.name}</div>
+            <div class="state-card-top">
+                <div class="state-card-count">${count}</div>
+                <div style="text-align:right">
+                    <div class="state-card-zone">${info.zone}</div>
+                    <div style="font-size:10px;color:var(--muted);margin-top:2px">${zonePct}% of zone</div>
+                </div>
+            </div>
+            <div class="state-card-bar-track"><div class="state-card-bar-fill" style="--state-bar-width:${sw}%"></div></div>
+        `;
+        statesGrid.appendChild(card);
+    });
+
+    // Animate bars
+    setTimeout(() => {
+        document.querySelectorAll('.zone-bar-fill, .state-mini-fill, .state-card-bar-fill').forEach(el => el.classList.add('animated'));
+    }, 100);
+}
+
+// --- Search Functionality ---
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.state-card');
+    cards.forEach(card => {
+        const name = card.querySelector('.state-card-full').textContent.toLowerCase();
+        const code = card.querySelector('.state-card-name').textContent.toLowerCase();
+        if(name.includes(term) || code.includes(term)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+
+// --- Bubble Chart ---
+const canvas = document.getElementById('bubbleCanvas');
+function drawBubbles(filterZone) {
+    const W = canvas.parentElement.clientWidth - 60;
+    const H = Math.min(400, W * 0.55);
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    const maxState = Math.max(...Object.values(stateCounts));
+    
+    let bubbleStates = [];
+    if(filterZone === 'all') {
+        bubbleStates = Object.entries(stateCounts);
+    } else {
+        bubbleStates = zoneData[filterZone].states.map(s => [s.code, s.count]);
+    }
+
+    const items = bubbleStates.map(([code, count]) => ({
+        code,
+        count,
+        color: zoneColors[stateMap[code].zone],
+        r: Math.sqrt(count / maxState) * (W < 600 ? 38 : 55),
+    }));
+
+    // Circle packing
+    const padding = 4;
+    let x = 0, y = 0, rowH = 0;
+    for (const item of items) {
+        if (x + item.r * 2 + padding > W) { x = 0; y += rowH + padding; rowH = 0; }
+        item.cx = x + item.r;
+        item.cy = y + item.r;
+        x += item.r * 2 + padding;
+        rowH = Math.max(rowH, item.r * 2);
+    }
+
+    const newH = y + rowH + 10;
+    canvas.height = newH;
+
+    for (const item of items) {
+        const { cx, cy, r, color } = item;
+        const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        grd.addColorStop(0, color + '40');
+        grd.addColorStop(1, color + '08');
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = color + '80';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        if (r > 16) {
+            ctx.fillStyle = '#fff';
+            ctx.font = `bold ${Math.max(8, Math.min(11, r * 0.32))}px DM Sans`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(item.code, cx, cy - r * 0.15);
+            ctx.font = `${Math.max(7, Math.min(10, r * 0.26))}px DM Sans`;
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.fillText(item.count, cx, cy + r * 0.22);
+        }
+    }
+}
+
+// Initial Render
+filterData('all');
+window.addEventListener('resize', () => drawBubbles(document.querySelector('.nav-item.active').innerText.replace('\nAll Zones','').trim()));
+
 </script>
 </body>
 </html>
