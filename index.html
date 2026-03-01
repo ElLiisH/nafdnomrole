@@ -6,7 +6,7 @@
   <title>NAFDAC Staff Distribution — Live Nominal Roll 2026</title>
 
   <!-- Correct Google Fonts link (DM Sans + Bebas Neue) -->
-  https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&display=swap
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,700;1,9..40,300&display=swap
 
   <style>
   /* =========================
@@ -54,7 +54,17 @@
     font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:var(--on-brand);
     margin-bottom:30px; display:flex; align-items:center; gap:10px;
   }
-  .brand-logo{width:16px;height:16px;background:var(--on-brand);border-radius:4px}
+
+  /* Force the logo to match the text height */
+  .naf-logo{
+    height:20px;      /* adjust to 18px or 22px if you prefer */
+    width:auto;       /* keep aspect ratio */
+    object-fit:contain;
+    display:inline-block;
+    vertical-align:middle;
+    margin-right:8px; /* spacing before the text */
+  }
+
   .mother-search{position:relative;margin-bottom:30px}
   .mother-search input{
     width:100%; padding:12px 15px; background:#fff; border:1px solid var(--brand-300);
@@ -105,7 +115,7 @@
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 
   /* Cards & containers */
-  .card,.milestone-container,.comp-chart-section,.table-container,.staff-controls,.zone-card,.state-card{
+  .card,.comp-chart-section,.table-container,.staff-controls,.zone-card,.state-card{
     background:var(--surface); border:1px solid var(--border); border-radius:12px;
   }
   .card-header{padding:16px 20px;border-bottom:1px solid var(--border-strong)}
@@ -179,11 +189,11 @@
 <body>
 
   <!-- Sidebar -->
-  <div class="sidebar-header">
-  naflog.jpg
-  <div class="brand-logo"></div>
-  NAFDAC
-</div>
+  <div class="sidebar">
+    <div class="sidebar-header">
+      naflog.jpg
+      NAFDAC
+    </div>
 
     <div class="mother-search">
       <input type="text" id="globalSearch" placeholder="Mother Search (Global View)..." onkeyup="handleGlobalSearch()">
@@ -235,7 +245,8 @@
           </div>
         </div>
       </section>
-       <!-- Zone cards -->
+
+      <!-- Geopolitical Zone Distribution (immediately after zonal comparison) -->
       <div class="section-title">Geopolitical Zone Distribution</div>
       <div class="zones-grid" id="zonesGrid"></div>
 
@@ -340,7 +351,7 @@
 
   const comparisonData = {"ABI":{"2017":57,"2022":51,"2026":42},"ABJ":{"2017":17,"2022":16,"2026":19},"ADA":{"2017":59,"2022":61,"2026":62},"AKW":{"2017":83,"2022":69,"2026":62},"ANA":{"2017":152,"2022":129,"2026":119},"BAU":{"2017":32,"2022":30,"2026":31},"BAY":{"2017":30,"2022":28,"2026":27},"BEN":{"2017":115,"2022":99,"2026":91},"BOR":{"2017":67,"2022":68,"2026":69},"CRO":{"2017":50,"2022":52,"2026":51},"DEL":{"2017":114,"2022":102,"2026":86},"EBO":{"2017":40,"2022":44,"2026":45},"EDO":{"2017":106,"2022":91,"2026":79},"EKI":{"2017":54,"2022":48,"2026":42},"ENU":{"2017":76,"2022":75,"2026":68},"GOM":{"2017":43,"2022":44,"2026":45},"IMO":{"2017":130,"2022":112,"2026":100},"JIG":{"2017":29,"2022":35,"2026":34},"KAD":{"2017":73,"2022":71,"2026":66},"KAN":{"2017":40,"2022":45,"2026":47},"KAT":{"2017":38,"2022":44,"2026":43},"KEB":{"2017":35,"2022":37,"2026":40},"KOG":{"2017":119,"2022":113,"2026":101},"KWA":{"2017":75,"2022":76,"2026":75},"LAG":{"2017":56,"2022":50,"2026":43},"NAS":{"2017":42,"2022":42,"2026":46},"NIG":{"2017":44,"2022":46,"2026":44},"OGU":{"2017":77,"2022":55,"2026":46},"OND":{"2017":52,"2022":48,"2026":46},"OSU":{"2017":72,"2022":68,"2026":66},"OYO":{"2017":68,"2022":63,"2026":57},"PLA":{"2017":57,"2022":54,"2026":56},"RIV":{"2017":45,"2022":41,"2026":42},"SOK":{"2017":22,"2022":32,"2026":34},"TAR":{"2017":41,"2022":43,"2026":45},"YOB":{"2017":24,"2022":32,"2026":30},"ZAM":{"2017":37,"2022":38,"2026":39}};
 
-  /* Staff dataset (sample entries + fillers) */
+  /* Sample staff data (some entries + fillers) */
   const realStaffData = [
     { sn: 1, name: "PROF ADEYEYE CHRISTIANAH MOJI", rank: "DIRECTOR GENERAL", id: "SS/2671", state: "OSU", dir: "DGO", loc: "CHQ" },
     { sn: 2, name: "DR MOMODU RAMETU O", rank: "DIRECTOR", id: "SS/130", state: "EDO", dir: "NCS", loc: "ISOLO" },
