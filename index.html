@@ -6,17 +6,36 @@
 <title>NAFDAC Staff Distribution — Live Nominal Roll 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #013220;
-    --surface: #FFFFFF;
-    --surface2: #1a2540;
-    --accent: #00d4aa;
-    --accent2: #f59e0b;
-    --accent3: #f43f5e;
-    --text: ##0A0F1A;
-    --muted: #64748b;
-    --sidebar-width: 280px;
-  }
+  
+:root {
+  /* Core background + text */
+  --bg: #FFFFFF;                 /* page background (white) */
+  --text: #0A0F1A;               /* near-black text for readability on white */
+
+  /* Brand (NAFDAC-like) greens */
+  --brand: #013220;              /* deep forest green (your current) */
+  --brand-600: #0c3f2c;          /* hover/active darker */
+  --brand-300: #2f6b57;          /* borders, subtle tints */
+  --brand-50:  #eaf3f0;          /* very light green tint for subtle panels */
+
+  /* Accents (reds & supporting) */
+  --accent-red: #d32f2f;         /* alerts/CTA accent (accessible on white) */
+  --accent-red-600: #b71c1c;     /* hover/active */
+  --accent-amber: #f59e0b;       /* you already use this; keep for notices */
+
+  /* Neutral surfaces */
+  --surface: #FFFFFF;            /* cards, main content panels */
+  --surface-2: #F8FAFC;          /* secondary panels (light, neutral) */
+  --muted: #64748B;              /* secondary text on white */
+
+  /* UI chrome */
+  --sidebar-width: 280px;
+
+  /* On-color text (when background is dark/brand) */
+  --on-brand: #FFFFFF;           /* text/icons on brand green */
+  --on-accent-red: #FFFFFF;      /* text/icons on accent red */
+}
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: var(--bg);
