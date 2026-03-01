@@ -591,6 +591,77 @@ Object.keys(zoneColors).forEach(z => {
 
 updateLiveDates();
 filterData('all');
+/* ===== BUILD ZONAL COMPARISON FROM YOUR EXISTING STATE DATA ===== */
+
+(function buildZonalChart(){
+
+    // Prepare zone totals
+    const zoneTotals = {};
+
+    Object.keys(comparisonData).forEach(code => {
+        const zone = stateMap[code].zone;
+        if(!zoneTotals[zone]){
+            zoneTotals[zone] = { "2017":0, "2022":0, "2026":0 };
+        }
+        zoneTotals[zone]["2017"] += comparisonData[code]["2017"];
+        zoneTotals[zone]["2022"] += comparisonData[code]["2022"];
+        zoneTotals[zone]["2026"] += comparisonData[code]["2026"];
+    });
+
+    const zones = Object.keys(zoneTotals);
+
+    const data2017 = zones.map(z => zoneTotals[z]["2017"]);
+    const data2022 = zones.map(z => zoneTotals[z]["2022"]);
+    const data2026 = zones.map(z => zoneTotals[z]["2026"]);
+
+    const ctx = document.getElementById("zonalComparisonChart");
+
+    if(!ctx) return;
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: zones,
+            datasets: [
+                {
+                    label: "2017",
+                    data: data2017,
+                    backgroundColor: "#991b1b"
+                },
+                {
+                    label: "2022",
+                    data: data2022,
+                    backgroundColor: "#166534"
+                },
+                {
+                    label: "2026",
+                    data: data2026,
+                    backgroundColor: "#22c55e"
+                }
+            ]
+        },
+        options: {
+            responsive:true,
+            plugins:{
+                legend:{
+                    labels:{ color:"#222", font:{weight:"600"} }
+                }
+            },
+            scales:{
+                x:{
+                    ticks:{ color:"#333" },
+                    grid:{ display:false }
+                },
+                y:{
+                    beginAtZero:true,
+                    ticks:{ color:"#333" },
+                    grid:{ color:"#e5e7eb" }
+                }
+            }
+        }
+    });
+
+})();
 </script>
 </body>
 </html>
