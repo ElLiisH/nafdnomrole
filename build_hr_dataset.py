@@ -20,9 +20,9 @@ def load_roll(path):
         "PRESENT APPT.": "rank",
         "STAFF NO": "staff_no",
         "STATE OF ORIGIN": "state",
-        "DEPT": "dept"
+        "DIR": "dir"
     })
-    df = df[["name","rank","staff_no","state","dept"]].dropna(subset=["name"])
+    df = df[["name","rank","staff_no","state","dir"]].dropna(subset=["name"])
     df["state"] = df["state"].str.strip().str.upper()
     return df
 
