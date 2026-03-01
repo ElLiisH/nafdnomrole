@@ -5,7 +5,8 @@ from pathlib import Path
 FILES = {
     "2017": "Nominal Roll as at 30th November, 2017.xlsx",
     "2022": "Nominal Roll as at 31st December, 2022.xlsx",
-    "2024": "Nominal Roll as at 31st December, 2024 1.xlsx"
+    "2024": "Nominal Roll as at 31st December, 2024 1.xlsx",
+    "2026": "NOMINAL ROLL AS AT 27TH FEBRUARY 2026.xlsx"
 }
 
 OUTPUT_DIR = Path("output")
