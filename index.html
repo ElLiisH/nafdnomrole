@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NAFDAC Staff Distribution — Live Nominal Roll 2026</title>
+<title>NAFDAC Staff Distribution — Nominal Roll 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -27,6 +27,7 @@
     overflow-x: hidden;
   }
 
+  /* Grain texture overlay */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -34,7 +35,7 @@
     pointer-events: none; z-index: 1000; opacity: 0.6;
   }
 
-  /* --- Sidebar --- */
+  /* --- Sidebar Styles --- */
   .sidebar {
     width: var(--sidebar-width);
     background: var(--surface);
@@ -46,17 +47,29 @@
     flex-direction: column;
     z-index: 1001;
   }
+
   .sidebar-header {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 24px;
     letter-spacing: 2px;
     color: #fff;
     margin-bottom: 30px;
-    display: flex; align-items: center; gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
-  .brand-logo { width: 16px; height: 16px; background: var(--accent); border-radius: 4px; }
-  .mother-search { position: relative; margin-bottom: 30px; }
-  .mother-search input {
+
+  .brand-logo {
+    width: 16px; height: 16px;
+    background: var(--accent);
+    border-radius: 4px;
+  }
+
+  .search-box {
+    position: relative;
+    margin-bottom: 30px;
+  }
+  .search-input {
     width: 100%;
     padding: 12px 15px;
     background: var(--bg);
@@ -65,8 +78,9 @@
     color: #fff;
     font-size: 13px;
   }
+  .search-input:focus { outline: 1px solid var(--accent); }
 
-  .nav-group { margin-bottom: 20px; flex-grow: 1; overflow-y: auto; }
+  .nav-group { margin-bottom: 30px; }
   .nav-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 12px;
@@ -76,31 +90,31 @@
     margin-bottom: 15px;
   }
   .nav-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px; color: var(--text);
-    text-decoration: none; border-radius: 6px;
-    font-size: 14px; cursor: pointer;
-    background: transparent; border: none;
-    width: 100%; text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    color: var(--text);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
     transition: background 0.2s;
   }
   .nav-item:hover, .nav-item.active { background: var(--surface2); color: #fff; }
   .nav-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-  .staff-btn-container { margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
-  .staff-nav-item { 
-    background: rgba(0, 212, 170, 0.1); 
-    color: var(--accent); 
-    border: 1px solid rgba(0, 212, 170, 0.2); 
-    font-weight: 700;
-  }
-
-  /* --- Main Content --- */
+  /* --- Main Content Container --- */
   .main-content {
     margin-left: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width));
   }
 
+  /* --- Header Styles --- */
   header {
     padding: 60px 60px 40px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -109,502 +123,520 @@
   }
   header::after {
     content: 'NAFDAC';
-    position: absolute; right: -20px; top: -10px;
+    position: absolute;
+    right: -20px; top: -10px;
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 180px; color: rgba(255,255,255,0.02);
-    letter-spacing: 10px; pointer-events: none;
+    font-size: 180px;
+    color: rgba(255,255,255,0.02);
+    letter-spacing: 10px;
+    pointer-events: none;
   }
   .header-label {
-    font-size: 11px; letter-spacing: 4px;
-    text-transform: uppercase; color: var(--accent);
-    margin-bottom: 10px; font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    font-weight: 500;
   }
   h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-size: clamp(36px, 5vw, 64px);
-    letter-spacing: 3px; line-height: 1;
-    color: #fff; margin-bottom: 6px;
+    letter-spacing: 3px;
+    line-height: 1;
+    color: #fff;
+    margin-bottom: 6px;
   }
-  .header-sub { color: var(--muted); font-size: 13px; font-weight: 300; max-width: 600px; }
+  .header-sub {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 300;
+    max-width: 600px;
+  }
   .total-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    margin-top: 20px; background: rgba(0,212,170,0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    background: rgba(0,212,170,0.1);
     border: 1px solid rgba(0,212,170,0.3);
-    border-radius: 4px; padding: 8px 18px;
-    font-size: 13px; color: var(--accent);
+    border-radius: 4px;
+    padding: 8px 18px;
+    font-size: 13px;
+    color: var(--accent);
   }
   .total-badge strong { font-size: 22px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
 
   .main { padding: 50px 60px; }
+
+  /* Section titles */
   .section-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px; letter-spacing: 5px;
-    color: var(--muted); text-transform: uppercase;
-    margin-bottom: 30px; display: flex;
-    align-items: center; gap: 14px;
+    font-size: 13px;
+    letter-spacing: 5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
   .section-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
 
-  /* Charts & Visuals */
+  /* Recruitment Milestone Chart Styles */
   .milestone-container {
-    background: var(--surface); border-radius: 12px;
+    background: var(--surface);
+    border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.06);
-    padding: 40px; margin-bottom: 60px;
+    padding: 40px;
+    margin-bottom: 60px;
+    position: relative;
+    overflow: hidden;
   }
   .milestone-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 30px; align-items: end; height: 300px; margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    align-items: end;
+    height: 300px;
+    margin-top: 20px;
   }
   .milestone-bar-wrapper {
-    display: flex; flex-direction: column; align-items: center;
-    height: 100%; justify-content: flex-end; position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    position: relative;
   }
   .milestone-bar {
-    width: 100%; max-width: 80px;
+    width: 100%;
+    max-width: 80px;
     background: linear-gradient(to top, var(--accent), #4ade80);
     border-radius: 6px 6px 2px 2px;
-    position: relative; transition: height 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-    height: 0; box-shadow: 0 10px 30px -10px rgba(0, 212, 170, 0.4);
+    position: relative;
+    transition: height 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+    height: 0;
+    box-shadow: 0 10px 30px -10px rgba(0, 212, 170, 0.4);
   }
   .milestone-bar.era-pre { background: linear-gradient(to top, #334155, #64748b); box-shadow: none; opacity: 0.6; }
   .milestone-val {
-    position: absolute; top: -30px; width: 100%;
-    text-align: center; font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px; color: #fff;
+    position: absolute;
+    top: -30px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: #fff;
   }
   .milestone-label {
-    margin-top: 20px; text-align: center; font-size: 11px;
-    text-transform: uppercase; letter-spacing: 1px;
-    color: var(--muted); line-height: 1.4;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    line-height: 1.4;
   }
-  .milestone-label strong { display: block; color: var(--text); font-size: 13px; margin-bottom: 4px; }
+  .milestone-label strong {
+    display: block;
+    color: var(--text);
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
 
-  .comp-chart-section {
-    background: var(--surface); border-radius: 12px;
+  /* Zone cards */
+  .zones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 60px;
+  }
+  .zone-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 28px;
     border: 1px solid rgba(255,255,255,0.06);
-    padding: 40px; margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
   }
-  .comp-legend { display: flex; gap: 20px; margin-bottom: 40px; }
-  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
-  .legend-box { width: 12px; height: 12px; border-radius: 2px; }
-
-  .comp-scroll-wrapper { overflow-x: auto; padding-bottom: 10px; }
-  .comp-flex-container { display: flex; align-items: flex-end; gap: 32px; min-width: max-content; height: 260px; padding-top: 40px; }
-  .state-group { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-  .bars-cluster { display: flex; align-items: flex-end; gap: 3px; height: 200px; position: relative; }
-  .bar-v { width: 12px; border-radius: 2px 2px 0 0; transition: height 1s ease-out; position: relative; }
-  .bar-2017 { background: #334155; opacity: 0.6; }
-  .bar-2022 { background: #3b82f6; opacity: 0.8; }
-  .bar-2026 { background: var(--accent); box-shadow: 0 0 15px rgba(0, 212, 170, 0.2); }
-  .state-label { font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: var(--muted); letter-spacing: 0.5px; }
-
-  /* --- Tables & Controls --- */
-  .table-container {
-      background: var(--surface);
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.06);
-      margin-bottom: 60px;
-      overflow: hidden;
+  .zone-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.15); }
+  .zone-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--zone-color);
   }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-  th { 
-      background: rgba(255,255,255,0.02); 
-      padding: 15px 20px; 
-      font-family: 'Bebas Neue', sans-serif; 
-      letter-spacing: 1px; 
-      color: var(--muted);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+  .zone-accent-bg {
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: var(--zone-color);
+    opacity: 0.05;
+    filter: blur(20px);
   }
-  td { padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text); }
-  tr:hover td { background: rgba(255,255,255,0.02); }
-  .td-bold { color: #fff; font-weight: 600; }
+  .zone-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .zone-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--zone-color);
+    line-height: 1.1;
+    max-width: 160px;
+  }
+  .zone-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: #fff;
+    line-height: 1;
+  }
+  .zone-pct {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    margin-top: 2px;
+  }
 
-  /* Directory Filter Bar */
-  .staff-directory-view { display: none; }
-  .staff-controls { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 25px; 
-    background: var(--surface); 
-    padding: 24px;
+  .zone-bar-track {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .zone-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--zone-color);
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+    width: 0;
+  }
+  .zone-bar-fill.animated { width: var(--bar-width); }
+
+  .zone-states { display: flex; flex-direction: column; gap: 6px; }
+  .state-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .state-code { width: 32px; color: var(--muted); font-weight: 500; font-size: 11px; letter-spacing: 0.5px; }
+  .state-name { width: 90px; color: var(--text); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .state-mini-track { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+  .state-mini-fill { height: 100%; border-radius: 2px; background: var(--zone-color); opacity: 0.7; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); width: 0; }
+  .state-mini-fill.animated { width: var(--state-bar-width); }
+  .state-num { width: 28px; text-align: right; color: var(--muted); font-size: 11px; }
+
+  /* States full section */
+  .states-container {
+    background: var(--surface);
     border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+    margin-bottom: 60px;
   }
-  .local-filter-group { position: relative; width: 450px; }
-  .local-filter-group label {
-      display: block; font-size: 10px; color: var(--accent);
-      margin-bottom: 8px; letter-spacing: 2px; font-weight: 700;
+  .states-header {
+    padding: 22px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  .local-filter-group input {
-    width: 100%;
-    padding: 14px 20px;
-    background: var(--bg);
-    border: 1px solid rgba(0, 212, 170, 0.4);
-    border-radius: 8px;
-    color: #fff;
-    font-size: 14px;
-    outline: none;
-    transition: 0.3s;
-  }
-  .local-filter-group input:focus { 
-      border-color: var(--accent); 
-      box-shadow: 0 0 20px rgba(0,212,170,0.1); 
-  }
-  
-  .page-btn { 
-    background: var(--surface2); border: 1px solid rgba(255,255,255,0.1); color: #fff;
-    padding: 10px 22px; border-radius: 6px; cursor: pointer; font-family: 'Bebas Neue', sans-serif; 
-    letter-spacing: 1.5px; font-size: 14px;
-  }
-  .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .states-header h3 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: #fff; }
+  .states-body { padding: 28px; }
 
-  .zones-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; margin-bottom: 60px; }
-  .zone-card {
-    background: var(--surface); border-radius: 12px; padding: 28px;
-    border: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden;
+  .all-states-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
   }
-  .zone-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--zone-color); }
-  .zone-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--zone-color); letter-spacing: 1px; }
-  .zone-count { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: #fff; }
-
-  .all-states-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
   .state-card {
-    background: var(--surface2); border-radius: 8px; padding: 14px 16px; border: 1px solid rgba(255,255,255,0.05); position: relative;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s;
   }
-  .state-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--zone-color); }
-  
-  footer { padding: 40px 60px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+  .state-card:hover { transform: translateY(-2px); }
+  .state-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--zone-color);
+  }
+  .state-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .state-card-name { font-size: 11px; color: var(--muted); letter-spacing: 0.5px; }
+  .state-card-full { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .state-card-count { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #fff; line-height: 1; }
+  .state-card-zone { font-size: 10px; color: var(--zone-color); text-transform: uppercase; letter-spacing: 1px; }
+  .state-card-bar-track { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+  .state-card-bar-fill { height: 100%; border-radius: 2px; background: var(--zone-color); opacity: 0.7; transition: width 1.3s cubic-bezier(0.4,0,0.2,1); width: 0; }
+  .state-card-bar-fill.animated { width: var(--state-bar-width); }
+
+  footer {
+    padding: 30px 60px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
 </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <div class="sidebar-header"><div class="brand-logo"></div> NAFDAC</div>
-    <div class="mother-search">
-        <input type="text" id="globalSearch" placeholder="Mother Search (Global View)..." onkeyup="handleGlobalSearch()">
+    <div class="sidebar-header">
+        <div class="brand-logo"></div>
+        NAFDAC
+    </div>
+    <div class="search-box">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search States...">
     </div>
     <div class="nav-group">
         <div class="nav-title">Geopolitical Zones</div>
-        <button class="nav-item active" id="navDashboard" onclick="switchView('dashboard')">
-            <div class="nav-dot" style="background:#fff"></div> Dashboard Overview
+        <button class="nav-item active" onclick="filterData('all')">
+            <div class="nav-dot" style="background:#fff"></div>
+            All Zones
         </button>
         <div id="zoneNavList"></div>
-    </div>
-    <div class="staff-btn-container">
-        <button class="nav-item staff-nav-item" id="navStaff" onclick="switchView('staff')">
-            <div class="nav-dot" style="background:var(--accent)"></div> Verified Staff (2,038)
-        </button>
     </div>
 </div>
 
 <div class="main-content">
     <header>
-      <div class="header-label" id="liveDateLabel">Official Nominal Roll Analysis · Feb 2026</div>
-      <h1 id="mainTitle">NAFDAC Staff<br>Distribution</h1>
-      <div class="header-sub">National Agency for Food and Drug Administration & Control — Integrated Analysis System</div>
+      <div class="header-label">Nominal Roll Analysis · February 27, 2026</div>
+      <h1>NAFDAC Staff<br>Distribution</h1>
+      <div class="header-sub">National Agency for Food and Drug Administration & Control — Plot 2032 Olusegun Obasanjo Way, Wuse Zone 7, Abuja</div>
       <div class="total-badge">
         <strong id="totalCount">2,038</strong>
-        <span>Current Active Personnel</span>
+        <span>Total Staff on Roll</span>
       </div>
     </header>
 
-    <div class="main" id="dashboardView">
-      <div class="section-title">Historical Recruitment Data</div>
+    <div class="main">
+      
+      <div class="section-title">Administration Recruitment Milestones</div>
       <div class="milestone-container">
           <div class="milestone-grid">
               <div class="milestone-bar-wrapper">
                   <div class="milestone-val">1,679</div>
-                  <div class="milestone-bar era-pre" style="height: 100%;"></div>
-                  <div class="milestone-label"><strong>Pre-2017</strong>Legacy Staff Base</div>
+                  <div class="milestone-bar era-pre" id="bar1" style="height: 100%;"></div>
+                  <div class="milestone-label">
+                      <strong>Pre-Administration</strong>
+                      Prior to Nov 2017
+                  </div>
               </div>
               <div class="milestone-bar-wrapper">
                   <div class="milestone-val">55</div>
-                  <div class="milestone-bar" style="height: 3.2%;"></div>
-                  <div class="milestone-label"><strong>2017-2021</strong>Strategic In-fill</div>
+                  <div class="milestone-bar" id="bar2" style="height: 3.2%;"></div>
+                  <div class="milestone-label">
+                      <strong>Strategic Growth</strong>
+                      2017 — 2021
+                  </div>
               </div>
               <div class="milestone-bar-wrapper">
                   <div class="milestone-val">140</div>
-                  <div class="milestone-bar" style="height: 8.3%;"></div>
-                  <div class="milestone-label"><strong>2022 Roll</strong>Core Recruitment</div>
+                  <div class="milestone-bar" id="bar3" style="height: 8.3%;"></div>
+                  <div class="milestone-label">
+                      <strong>2022 Recruitment</strong>
+                      Milestone Cohort
+                  </div>
               </div>
               <div class="milestone-bar-wrapper">
                   <div class="milestone-val">164</div>
-                  <div class="milestone-bar" style="height: 9.7%;"></div>
-                  <div class="milestone-label"><strong>2024-Present</strong>Current Phase</div>
+                  <div class="milestone-bar" id="bar4" style="height: 9.7%;"></div>
+                  <div class="milestone-label">
+                      <strong>2024 — Today</strong>
+                      Current Expansion
+                  </div>
               </div>
           </div>
       </div>
 
-      <div class="section-title">Comparative Growth by State</div>
-      <div class="comp-chart-section">
-        <div class="comp-legend">
-            <div class="legend-item"><div class="legend-box bar-2017"></div> 2017 Roll</div>
-            <div class="legend-item"><div class="legend-box bar-2022"></div> 2022 Roll</div>
-            <div class="legend-item"><div class="legend-box bar-2026"></div> 2026 Roll</div>
-        </div>
-        <div class="comp-scroll-wrapper">
-            <div class="comp-flex-container" id="compChartContainer"></div>
-        </div>
-      </div>
-
-      <div class="table-container">
-          <table>
-              <thead>
-                  <tr><th>State of Origin</th><th>2017 Roll</th><th>2022 Roll</th><th>2026 Roll</th><th>Net Growth (%)</th></tr>
-              </thead>
-              <tbody id="dataTableBody"></tbody>
-          </table>
-      </div>
-
-      <div class="section-title">Geopolitical Zone Distribution</div>
+      <div class="section-title">Geopolitical Zone Breakdown</div>
       <div class="zones-grid" id="zonesGrid"></div>
 
-      <div class="section-title">Individual State Metrics</div>
-      <div class="all-states-grid" id="statesGrid"></div>
-    </div>
-
-    <div class="main staff-directory-view" id="staffView">
-        <div class="section-title">Nominal Roll — Verification Directory</div>
-        
-        <div class="staff-controls">
-            <div class="local-filter-group">
-                <label>FILTER TABLE (NAME / ID / DIR)</label>
-                <input type="text" id="localTableSearch" placeholder="Narrow down staff records..." onkeyup="filterStaffTable()">
-            </div>
-            <div style="text-align: right">
-                <div style="font-size:12px; color:var(--muted); margin-bottom: 12px; font-weight: 500;">Page View: <span id="staffRange" style="color:#fff">1 - 50</span> of <span id="totalVisible" style="color:var(--accent)">2,038</span></div>
-                <div style="display:flex; gap:12px">
-                    <button class="page-btn" id="prevPage" onclick="changePage(-1)">Previous</button>
-                    <button class="page-btn" id="nextPage" onclick="changePage(1)">Next</button>
-                </div>
-            </div>
+      <div class="section-title">State-by-State Breakdown</div>
+      <div class="states-container">
+        <div class="states-header">
+          <h3 id="statesContainerTitle">All States</h3>
         </div>
-
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>S/N</th>
-                        <th>FULL NAME</th>
-                        <th>RANK / APPOINTMENT</th>
-                        <th>STAFF NO.</th>
-                        <th>STATE</th>
-                        <th>DIR</th>
-                        <th>LOCATION</th>
-                    </tr>
-                </thead>
-                <tbody id="staffTableBody"></tbody>
-            </table>
+        <div class="states-body">
+          <div class="all-states-grid" id="statesGrid"></div>
         </div>
+      </div>
     </div>
 
     <footer>
-      <span>NAFDAC VERIFIED NOMINAL ROLL</span>
-      <span>INTERNAL HR DASHBOARD — v3.0 (FEB 2026)</span>
+      <span>NAFDAC NOMINAL ROLL — 27 FEB 2026</span>
+      <span>STAFF DISTRIBUTION ANALYSIS</span>
     </footer>
 </div>
 
 <script>
-const zoneColors = {'North Central': '#10b981','North East': '#3b82f6','North West': '#8b5cf6','South East': '#f59e0b','South South': '#06b6d4','South West': '#f43f5e'};
-const stateMap = {'ABI': { name: 'Abia', zone: 'South East' }, 'ABJ': { name: 'FCT (Abuja)', zone: 'North Central' }, 'ADA': { name: 'Adamawa', zone: 'North East' }, 'AKW': { name: 'Akwa Ibom', zone: 'South South' }, 'ANA': { name: 'Anambra', zone: 'South East' }, 'BAU': { name: 'Bauchi', zone: 'North East' }, 'BAY': { name: 'Bayelsa', zone: 'South South' }, 'BEN': { name: 'Benue', zone: 'North Central' }, 'BOR': { name: 'Borno', zone: 'North East' }, 'CRO': { name: 'Cross River', zone: 'South South' }, 'DEL': { name: 'Delta', zone: 'South South' }, 'EBO': { name: 'Ebonyi', zone: 'South East' }, 'EDO': { name: 'Edo', zone: 'South South' }, 'EKI': { name: 'Ekiti', zone: 'South West' }, 'ENU': { name: 'Enugu', zone: 'South East' }, 'GOM': { name: 'Gombe', zone: 'North East' }, 'IMO': { name: 'Imo', zone: 'South East' }, 'JIG': { name: 'Jigawa', zone: 'North West' }, 'KAD': { name: 'Kaduna', zone: 'North West' }, 'KAN': { name: 'Kano', zone: 'North West' }, 'KAT': { name: 'Katsina', zone: 'North West' }, 'KEB': { name: 'Kebbi', zone: 'North West' }, 'KOG': { name: 'Kogi', zone: 'North Central' }, 'KWA': { name: 'Kwara', zone: 'North Central' }, 'LAG': { name: 'Lagos', zone: 'South West' }, 'NAS': { name: 'Nasarawa', zone: 'North Central' }, 'NIG': { name: 'Niger', zone: 'North Central' }, 'OGU': { name: 'Ogun', zone: 'South West' }, 'OND': { name: 'Ondo', zone: 'South West' }, 'OSU': { name: 'Osun', zone: 'South West' }, 'OYO': { name: 'Oyo', zone: 'South West' }, 'PLA': { name: 'Plateau', zone: 'North Central' }, 'RIV': { name: 'Rivers', zone: 'South South' }, 'SOK': { name: 'Sokoto', zone: 'North West' }, 'TAR': { name: 'Taraba', zone: 'North East' }, 'YOB': { name: 'Yobe', zone: 'North East' }, 'ZAM': { name: 'Zamfara', zone: 'North West' }};
+const zoneColors = {
+  'North Central': '#10b981',
+  'North East': '#3b82f6',
+  'North West': '#8b5cf6',
+  'South East': '#f59e0b',
+  'South South': '#06b6d4',
+  'South West': '#f43f5e',
+};
 
-const comparisonData = {"ABI": {"2017": 57, "2022": 51, "2026": 42}, "ABJ": {"2017": 17, "2022": 16, "2026": 19}, "ADA": {"2017": 59, "2022": 61, "2026": 62}, "AKW": {"2017": 83, "2022": 69, "2026": 62}, "ANA": {"2017": 152, "2022": 129, "2026": 119}, "BAU": {"2017": 32, "2022": 30, "2026": 31}, "BAY": {"2017": 30, "2022": 28, "2026": 27}, "BEN": {"2017": 115, "2022": 99, "2026": 91}, "BOR": {"2017": 67, "2022": 68, "2026": 69}, "CRO": {"2017": 50, "2022": 52, "2026": 51}, "DEL": {"2017": 114, "2022": 102, "2026": 86}, "EBO": {"2017": 40, "2022": 44, "2026": 45}, "EDO": {"2017": 106, "2022": 91, "2026": 79}, "EKI": {"2017": 54, "2022": 48, "2026": 42}, "ENU": {"2017": 76, "2022": 75, "2026": 68}, "GOM": {"2017": 43, "2022": 44, "2026": 45}, "IMO": {"2017": 130, "2022": 112, "2026": 100}, "JIG": {"2017": 29, "2022": 35, "2026": 34}, "KAD": {"2017": 73, "2022": 71, "2026": 66}, "KAN": {"2017": 40, "2022": 45, "2026": 47}, "KAT": {"2017": 38, "2022": 44, "2026": 43}, "KEB": {"2017": 35, "2022": 37, "2026": 40}, "KOG": {"2017": 119, "2022": 113, "2026": 101}, "KWA": {"2017": 75, "2022": 76, "2026": 75}, "LAG": {"2017": 56, "2022": 50, "2026": 43}, "NAS": {"2017": 42, "2022": 42, "2026": 46}, "NIG": {"2017": 44, "2022": 46, "2026": 44}, "OGU": {"2017": 77, "2022": 55, "2026": 46}, "OND": {"2017": 52, "2022": 48, "2026": 46}, "OSU": {"2017": 72, "2022": 68, "2026": 66}, "OYO": {"2017": 68, "2022": 63, "2026": 57}, "PLA": {"2017": 57, "2022": 54, "2026": 56}, "RIV": {"2017": 45, "2022": 41, "2026": 42}, "SOK": {"2017": 22, "2022": 32, "2026": 34}, "TAR": {"2017": 41, "2022": 43, "2026": 45}, "YOB": {"2017": 24, "2022": 32, "2026": 30}, "ZAM": {"2017": 37, "2022": 38, "2026": 39}};
+const stateMap = {
+  'ABI': { name: 'Abia', zone: 'South East' }, 'ABJ': { name: 'FCT (Abuja)', zone: 'North Central' },
+  'ADA': { name: 'Adamawa', zone: 'North East' }, 'AKW': { name: 'Akwa Ibom', zone: 'South South' },
+  'ANA': { name: 'Anambra', zone: 'South East' }, 'BAU': { name: 'Bauchi', zone: 'North East' },
+  'BAY': { name: 'Bayelsa', zone: 'South South' }, 'BEN': { name: 'Benue', zone: 'North Central' },
+  'BOR': { name: 'Borno', zone: 'North East' }, 'CRO': { name: 'Cross River', zone: 'South South' },
+  'DEL': { name: 'Delta', zone: 'South South' }, 'EBO': { name: 'Ebonyi', zone: 'South East' },
+  'EDO': { name: 'Edo', zone: 'South South' }, 'EKI': { name: 'Ekiti', zone: 'South West' },
+  'ENU': { name: 'Enugu', zone: 'South East' }, 'GOM': { name: 'Gombe', zone: 'North East' },
+  'IMO': { name: 'Imo', zone: 'South East' }, 'JIG': { name: 'Jigawa', zone: 'North West' },
+  'KAD': { name: 'Kaduna', zone: 'North West' }, 'KAN': { name: 'Kano', zone: 'North West' },
+  'KAT': { name: 'Katsina', zone: 'North West' }, 'KEB': { name: 'Kebbi', zone: 'North West' },
+  'KOG': { name: 'Kogi', zone: 'North Central' }, 'KWA': { name: 'Kwara', zone: 'North Central' },
+  'LAG': { name: 'Lagos', zone: 'South West' }, 'NAS': { name: 'Nasarawa', zone: 'North Central' },
+  'NIG': { name: 'Niger', zone: 'North Central' }, 'OGU': { name: 'Ogun', zone: 'South West' },
+  'OND': { name: 'Ondo', zone: 'South West' }, 'OSU': { name: 'Osun', zone: 'South West' },
+  'OYO': { name: 'Oyo', zone: 'South West' }, 'PLA': { name: 'Plateau', zone: 'North Central' },
+  'RIV': { name: 'Rivers', zone: 'South South' }, 'SOK': { name: 'Sokoto', zone: 'North West' },
+  'TAR': { name: 'Taraba', zone: 'North East' }, 'YOB': { name: 'Yobe', zone: 'North East' },
+  'ZAM': { name: 'Zamfara', zone: 'North West' },
+};
 
-// RAW DATA INJECTION FROM 2026 NOMINAL ROLL CSV (Exact Names & Depts)
-const realStaffData = [
-    { sn: 1, name: "PROF ADEYEYE CHRISTIANAH MOJI", rank: "DIRECTOR GENERAL", id: "SS/2671", state: "OSU", dir: "DGO", loc: "CHQ" },
-    { sn: 2, name: "DR MOMODU RAMETU O", rank: "DIRECTOR", id: "SS/130", state: "EDO", dir: "NCS", loc: "ISOLO" },
-    { sn: 3, name: "MRS EDWARDS EVA OBIAGELI", rank: "DIRECTOR", id: "SS/1075", state: "LAG", dir: "FS&AN", loc: "ISOLO" },
-    { sn: 4, name: "MR SHABA MOHAMMED", rank: "DIRECTOR", id: "SS/534", state: "NIG", dir: "REGULATORY", loc: "SEZ/ENU" },
-    { sn: 5, name: "MRS SONNY-AFOEKELU UCHENNA M", rank: "DIRECTOR", id: "SS/781", state: "ANA", dir: "D R&R", loc: "ISOLO" },
-    { sn: 6, name: "MR OMOKPARIOLA PATRICK LEONARD", rank: "DIRECTOR", id: "SS/940", state: "EDO", dir: "CER", loc: "ISOLO" },
-    { sn: 7, name: "MR BABATUNDE A YUSUF", rank: "DIRECTOR", id: "SS/895", state: "LAG", dir: "LS OSHODI", loc: "OSHODI" },
-    { sn: 8, name: "MR AZIKIWE KENNETH ONYEOGHANE", rank: "DIRECTOR", id: "SS/181", state: "DEL", dir: "REGULATORY", loc: "NCZ/JOS" },
-    { sn: 9, name: "MR FRADEN BITRUS DASNIYAM", rank: "DIRECTOR", id: "SS/978", state: "ADA", dir: "PMS", loc: "CHQ" },
-    { sn: 10, name: "MR ILUYOMADE MARTINS A", rank: "DIRECTOR", id: "SS/1143", state: "OND", dir: "I&E", loc: "APAPA" },
-    { sn: 11, name: "MR OLIGBU CHUKWUMA PHILIP", rank: "DIRECTOR", id: "SS/1041", state: "ANA", dir: "REGULATORY", loc: "SSZ/PH" },
-    { sn: 12, name: "MR OBIANO LIVINUS CHIKE", rank: "DIRECTOR", id: "SS/799", state: "ANA", dir: "REGULATORY", loc: "NEZ/MAG" },
-    { sn: 13, name: "MR AMUDA KAYODE ISIAKA", rank: "DIRECTOR", id: "SS/761", state: "OYO", dir: "DER", loc: "ISOLO" },
-    { sn: 14, name: "MR ELEMUWA UCHENNA G", rank: "DIRECTOR", id: "SS/1159", state: "ANA", dir: "PV", loc: "CHQ" },
-    { sn: 15, name: "MR OBOLI AUGUSTINE U", rank: "DIRECTOR", id: "SS/183", state: "DEL", dir: "HRM", loc: "CHQ" },
-    { sn: 16, name: "MRS OSAKWE ANTHONIA O", rank: "DIRECTOR", id: "SS/750", state: "DEL", dir: "LAB SERVICES", loc: "ISOLO" },
-    { sn: 17, name: "MR YAKUBU IBRAHIM AHMED", rank: "DIRECTOR", id: "SS/515", state: "TAR", dir: "INVESTIGATION", loc: "APAPA" },
-    { sn: 18, name: "MR AJAYI FRANCIS OMOTAYO", rank: "DIRECTOR", id: "SS/755", state: "EKI", dir: "FINANCE", loc: "CHQ" },
-    { sn: 19, name: "MRS OKOYE CHIKODI", rank: "DIRECTOR", id: "SS/822", state: "ANA", dir: "ADMIN", loc: "CHQ" },
-    { sn: 20, name: "MR ILIYASU IBRAHIM", rank: "DIRECTOR", id: "SS/138", state: "KAT", dir: "V&B", loc: "ISOLO" },
-    { sn: 21, name: "MR MUSA UMAR", rank: "DIRECTOR", id: "SS/131", state: "SOK", dir: "LAB SERVICES", loc: "AGULU" },
-    { sn: 22, name: "MRS GIMBA FATIMA Z", rank: "DIRECTOR", id: "SS/622", state: "YOB", dir: "REGULATORY", loc: "NWZ/KAD" },
-    { sn: 23, name: "MR DANKARO OLUGBENGA E", rank: "DIRECTOR", id: "SS/922", state: "KOG", dir: "LSO", loc: "OSHODI" },
-    { sn: 24, name: "MRS ABAYOMI-SANTOS O", rank: "DIRECTOR", id: "SS/505", state: "LAG", dir: "LAB SERVICES", loc: "OSHODI" },
-    { sn: 25, name: "MR EGBERI CHARLES S", rank: "DIRECTOR", id: "SS/101", state: "DEL", dir: "LEGAL", loc: "CHQ" },
-    { sn: 26, name: "MRS OKWUOSA NNEKA E", rank: "DEPUTY DIRECTOR", id: "SS/1155", state: "ANA", dir: "FSD", loc: "CHQ" },
-    { sn: 27, name: "MR NWAOGU EMMANUEL N", rank: "DEPUTY DIRECTOR", id: "SS/605", state: "ABI", dir: "HRM", loc: "ISOLO" },
-    { sn: 28, name: "MR MUAZU BASHIR M", rank: "DEPUTY DIRECTOR", id: "SS/259", state: "KAT", dir: "REGULATORY", loc: "NEZ/MAG" },
-    { sn: 29, name: "MRS ODEY PATRICIA O", rank: "DEPUTY DIRECTOR", id: "SS/877", state: "CRO", dir: "PV", loc: "CHQ" },
-    { sn: 30, name: "MR OLUSEGUN ADEBAYO", rank: "DEPUTY DIRECTOR", id: "SS/311", state: "OGU", dir: "DER", loc: "ISOLO" },
-    { sn: 31, name: "MR GARBA SULAIMAN", rank: "DEPUTY DIRECTOR", id: "SS/442", state: "KAD", dir: "TECH", loc: "KADUNA" },
-    { sn: 32, name: "MRS ADEDEJI MARY", rank: "DEPUTY DIRECTOR", id: "SS/1101", state: "OYO", dir: "LAB SERVICES", loc: "OSHODI" },
-    { sn: 33, name: "MR IBRAHIM AUDU", rank: "DEPUTY DIRECTOR", id: "SS/1102", state: "KOG", dir: "FS&AN", loc: "CHQ" },
-    { sn: 34, name: "MRS ONI ABIMBOLA", rank: "DEPUTY DIRECTOR", id: "SS/1103", state: "EKI", dir: "FSD", loc: "CHQ" },
-    { sn: 35, name: "MR BELLO SANI", rank: "DEPUTY DIRECTOR", id: "SS/1104", state: "KAN", dir: "PMS", loc: "KANO" },
-    { sn: 36, name: "MRS OKORIE NGOZI", rank: "DEPUTY DIRECTOR", id: "SS/1105", state: "IMO", dir: "DER", loc: "ISOLO" },
-    { sn: 37, name: "MR SALIHU MUSA", rank: "DEPUTY DIRECTOR", id: "SS/1106", state: "BAU", dir: "REGULATORY", loc: "JOS" },
-    { sn: 38, name: "MRS THOMAS GRACE", rank: "DEPUTY DIRECTOR", id: "SS/1107", state: "AKW", dir: "PV", loc: "CHQ" },
-    { sn: 39, name: "MR DANJUMA HARUNA", rank: "DEPUTY DIRECTOR", id: "SS/1108", state: "TAR", dir: "HRM", loc: "CHQ" },
-    { sn: 40, name: "MR AUDU ADAMU J", rank: "DEPUTY DIRECTOR", id: "SS/722", state: "BAU", dir: "HRM", loc: "BAUCHI" },
-    { sn: 41, name: "MR KEHINDE ADEYINKA", rank: "DEPUTY DIRECTOR", id: "SS/901", state: "OND", dir: "PID", loc: "CHQ" },
-    { sn: 42, name: "MRS NWOSU CHINYERE", rank: "DEPUTY DIRECTOR", id: "SS/1109", state: "ABI", dir: "REGULATORY", loc: "PH" },
-    { sn: 43, name: "MR USMAN GARBA", rank: "DEPUTY DIRECTOR", id: "SS/1110", state: "JIG", dir: "V&B", loc: "DUTSE" },
-    { sn: 44, name: "MRS ADEBAYO TITILAYO", rank: "DEPUTY DIRECTOR", id: "SS/1111", state: "LAG", dir: "CER", loc: "ISOLO" },
-    { sn: 45, name: "MR SIGBEKU OLUMUYIWA TUNDE", rank: "DEPUTY DIRECTOR", id: "SS/515", state: "LAG", dir: "LSO", loc: "OSHODI" },
-    { sn: 46, name: "MRS EZE OKWUCHI", rank: "DEPUTY DIRECTOR", id: "SS/1112", state: "ENU", dir: "FSD", loc: "ENUGU" },
-    { sn: 47, name: "MR JIBRIN ALIYU", rank: "DEPUTY DIRECTOR", id: "SS/1113", state: "NAS", dir: "INVESTIGATION", loc: "APAPA" },
-    { sn: 48, name: "MRS LAWAL AMINA", rank: "DEPUTY DIRECTOR", id: "SS/1114", state: "KAT", dir: "ADMIN", loc: "CHQ" },
-    { sn: 49, name: "MR OBOT SAMUEL", rank: "DEPUTY DIRECTOR", id: "SS/1115", state: "AKW", dir: "FS&AN", loc: "UYO" },
-    { sn: 50, name: "MRS SMITH JANE", rank: "DEPUTY DIRECTOR", id: "SS/1116", state: "EDO", dir: "DER", loc: "ISOLO" },
-    { sn: 51, name: "MR SANI ADAMU", rank: "DEPUTY DIRECTOR", id: "SS/1117", state: "SOK", dir: "PMS", loc: "CHQ" },
-    { sn: 52, name: "MRS OJO TOYIN", rank: "DEPUTY DIRECTOR", id: "SS/1118", state: "OYO", dir: "LSO", loc: "OSHODI" },
-    { sn: 53, name: "MR IDRIS YUSUF", rank: "DEPUTY DIRECTOR", id: "SS/1119", state: "KEB", dir: "REGULATORY", loc: "CHQ" },
-    { sn: 54, name: "MRS CHUKWU EBERE", rank: "DEPUTY DIRECTOR", id: "SS/1120", state: "EBO", dir: "PV", loc: "CHQ" },
-    { sn: 55, name: "MR USMAN ABDULLAHI", rank: "CHIEF OFFICER", id: "SS/1122", state: "KAN", dir: "ICT", loc: "CHQ" },
-    { sn: 56, name: "MRS BABA HADIZA", rank: "CHIEF OFFICER", id: "SS/1123", state: "BOR", dir: "PID", loc: "CHQ" },
-    { sn: 57, name: "MR OKORO KINGSLEY", rank: "CHIEF OFFICER", id: "SS/1124", state: "DEL", dir: "FINANCE", loc: "CHQ" },
-    { sn: 58, name: "MRS AHMED AISHA", rank: "CHIEF OFFICER", id: "SS/1125", state: "GOM", dir: "HRM", loc: "CHQ" },
-    { sn: 59, name: "MR OKEKE OBINNA", rank: "CHIEF OFFICER", id: "SS/1126", state: "ANA", dir: "ADMIN", loc: "CHQ" },
-    { sn: 60, name: "MRS BELLO RAKIYA", rank: "CHIEF OFFICER", id: "SS/1127", state: "KWA", dir: "REGULATORY", loc: "ILORIN" },
-    { sn: 61, name: "MR OGEDEGBE OSASUYI COLLINS", rank: "DEPUTY DIRECTOR", id: "SS/688", state: "EDO", dir: "COORDINATOR", loc: "ENUGU" }
-];
+const stateCounts = {"ABI":42,"ABJ":19,"ADA":62,"AKW":62,"ANA":119,"BAU":31,"BAY":27,"BEN":91,"BOR":69,"CRO":51,"DEL":86,"EBO":45,"EDO":79,"EKI":42,"ENU":68,"GOM":45,"IMO":100,"JIG":34,"KAD":66,"KAN":47,"KAT":43,"KEB":40,"KOG":101,"KWA":75,"LAG":43,"NAS":46,"NIG":44,"OGU":46,"OND":46,"OSU":66,"OYO":57,"PLA":56,"RIV":42,"SOK":34,"TAR":45,"YOB":30,"ZAM":39};
 
-// Extend data with realistic placeholders up to 135, then generic to 2038
-for(let i=62; i<=135; i++) {
-    if (!realStaffData.find(x => x.sn === i)) {
-        realStaffData.push({sn: i, name: "VERIFIED STAFF ENTRY #"+i, rank: i < 100 ? "CHIEF OFFICER" : "PRINCIPAL OFFICER", id: "SS/"+(1100+i), state: Object.keys(stateMap)[i%36], dir: "TECH", loc: "ZONE OFFICE"});
-    }
-}
-for(let i=136; i<=2038; i++) {
-    realStaffData.push({sn: i, name: "NOMINAL ROLL RECORD #"+i, rank: "SENIOR OFFICER", id: "JS/"+(2000+i), state: "N/A", dir: "DIR", loc: "FIELD OFFICE"});
+// --- Initialization ---
+const total = Object.values(stateCounts).reduce((a,b)=>a+b,0);
+document.getElementById('totalCount').textContent = total.toLocaleString();
+
+const zoneData = {};
+for (const [code, cnt] of Object.entries(stateCounts)) {
+  const info = stateMap[code];
+  if (!info) continue;
+  if (!zoneData[info.zone]) zoneData[info.zone] = { count: 0, states: [] };
+  zoneData[info.zone].count += cnt;
+  zoneData[info.zone].states.push({ code, name: info.name, count: cnt });
 }
 
-let currentPage = 1;
-const perPage = 50;
-let filteredStaff = realStaffData;
-
-function switchView(view) {
-    const isStaff = view === 'staff';
-    document.getElementById('dashboardView').style.display = isStaff ? 'none' : 'block';
-    document.getElementById('staffView').style.display = isStaff ? 'block' : 'none';
-    document.getElementById('mainTitle').innerHTML = isStaff ? "NAFDAC Nominal Roll<br>Search Directory" : "NAFDAC Staff<br>Distribution";
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    document.getElementById(isStaff ? 'navStaff' : 'navDashboard').classList.add('active');
-    if(isStaff) renderStaffList();
-}
-
-function renderStaffList() {
-    const tbody = document.getElementById('staffTableBody');
-    tbody.innerHTML = '';
-    const start = (currentPage - 1) * perPage;
-    const end = start + perPage;
-    const subset = filteredStaff.slice(start, end);
-
-    subset.forEach(s => {
-        tbody.innerHTML += `<tr><td style="color:var(--muted)">${s.sn}</td><td class="td-bold">${s.name}</td><td>${s.rank}</td><td style="color:var(--accent)">${s.id}</td><td>${s.state}</td><td>${s.dir}</td><td>${s.loc}</td></tr>`;
-    });
-    
-    document.getElementById('staffRange').innerText = `${start + 1} - ${Math.min(end, filteredStaff.length)}`;
-    document.getElementById('totalVisible').innerText = filteredStaff.length;
-    document.getElementById('prevPage').disabled = currentPage === 1;
-    document.getElementById('nextPage').disabled = end >= filteredStaff.length;
-}
-
-function changePage(delta) {
-    currentPage += delta;
-    renderStaffList();
-    window.scrollTo({top: 0, behavior: 'smooth'});
-}
-
-// Sidebar Mother Search (Switches view automatically)
-function handleGlobalSearch() {
-    const val = document.getElementById('globalSearch').value.toLowerCase();
-    switchView('staff');
-    filteredStaff = realStaffData.filter(s => 
-        s.name.toLowerCase().includes(val) || s.id.toLowerCase().includes(val) || s.state.toLowerCase().includes(val)
-    );
-    currentPage = 1;
-    renderStaffList();
-}
-
-// Dedicated Local Table Filter
-function filterStaffTable() {
-    const val = document.getElementById('localTableSearch').value.toLowerCase();
-    filteredStaff = realStaffData.filter(s => 
-        s.name.toLowerCase().includes(val) || s.id.toLowerCase().includes(val) || s.dir.toLowerCase().includes(val)
-    );
-    currentPage = 1;
-    renderStaffList();
-}
-
-function updateLiveDates() {
-    const now = new Date();
-    const formatted = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-    document.getElementById('liveDateLabel').innerText = `Official Nominal Roll Analysis · ${formatted}`;
-}
-
-function filterData(zone, el) {
-    if(el) {
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        el.classList.add('active');
-    }
-    renderDashboardCharts(zone);
-}
-
-function renderDashboardCharts(filter) {
-    const chart = document.getElementById('compChartContainer');
-    const table = document.getElementById('dataTableBody');
-    chart.innerHTML = ''; table.innerHTML = '';
-    
-    let codes = Object.keys(comparisonData);
-    if (filter !== 'all') codes = codes.filter(c => stateMap[c].zone === filter);
-    codes.sort((a,b) => stateMap[a].name.localeCompare(stateMap[b].name));
-
-    codes.forEach(c => {
-        const d = comparisonData[c];
-        chart.innerHTML += `<div class="state-group"><div class="bars-cluster"><div class="bar-v bar-2017" style="height:${(d['2017']/160*100)}%"></div><div class="bar-v bar-2022" style="height:${(d['2022']/160*100)}%"></div><div class="bar-v bar-2026" style="height:${(d['2026']/160*100)}%"></div></div><div class="state-label">${c}</div></div>`;
-        const diff = d['2026'] - d['2017'];
-        table.innerHTML += `<tr><td>${stateMap[c].name}</td><td>${d['2017']}</td><td>${d['2022']}</td><td class="td-bold">${d['2026']}</td><td class="${diff>=0?'trend-up':'trend-down'}">${diff>=0?'+':''}${((diff/d['2017'])*100).toFixed(1)}%</td></tr>`;
-    });
-    renderZones(filter);
-}
-
-function renderZones(filter) {
-    const grid = document.getElementById('zonesGrid');
-    const sGrid = document.getElementById('statesGrid');
-    grid.innerHTML = ''; sGrid.innerHTML = '';
-    const zones = filter === 'all' ? Object.keys(zoneColors) : [filter];
-    
-    zones.forEach(z => {
-        const color = zoneColors[z];
-        const stateList = Object.keys(stateMap).filter(k => stateMap[k].zone === z);
-        const count = stateList.reduce((acc, k) => acc + comparisonData[k]['2026'], 0);
-        grid.innerHTML += `<div class="zone-card" style="--zone-color:${color}"><div class="zone-name">${z}</div><div class="zone-count">${count}</div></div>`;
-        stateList.forEach(k => {
-            const val = comparisonData[k]['2026'];
-            sGrid.innerHTML += `<div class="state-card" style="--zone-color:${color}"><div class="td-bold">${stateMap[k].name}</div><div style="font-family:'Bebas Neue'; font-size:24px">${val}</div></div>`;
-        });
-    });
-}
-
+// Populate Sidebar
 const zoneNavList = document.getElementById('zoneNavList');
-Object.keys(zoneColors).forEach(z => {
-    const b = document.createElement('button');
-    b.className = 'nav-item';
-    b.innerHTML = `<div class="nav-dot" style="background:${zoneColors[z]}"></div> ${z}`;
-    b.onclick = () => { switchView('dashboard'); filterData(z, b); };
-    zoneNavList.appendChild(b);
+Object.keys(zoneColors).forEach(zone => {
+    const btn = document.createElement('button');
+    btn.className = 'nav-item';
+    btn.innerHTML = `<div class="nav-dot" style="background:${zoneColors[zone]}"></div> ${zone}`;
+    btn.onclick = () => filterData(zone, btn);
+    zoneNavList.appendChild(btn);
 });
 
-updateLiveDates();
+// --- Data Filtering Logic ---
+function filterData(zoneName, element) {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    if(element) element.classList.add('active');
+    else document.querySelector('.nav-item').classList.add('active');
+    document.getElementById('statesContainerTitle').textContent = zoneName === 'all' ? 'All States' : zoneName + ' States';
+    renderGrid(zoneName);
+}
+
+// --- Render Logic ---
+function renderGrid(filterZone) {
+    const zonesGrid = document.getElementById('zonesGrid');
+    const statesGrid = document.getElementById('statesGrid');
+    zonesGrid.innerHTML = '';
+    statesGrid.innerHTML = '';
+
+    const maxZone = Math.max(...Object.values(zoneData).map(z=>z.count));
+    const maxState = Math.max(...Object.values(stateCounts));
+
+    const zonesToRender = filterZone === 'all' ? Object.keys(zoneColors) : [filterZone];
+    
+    zonesToRender.forEach(zoneName => {
+        const zd = zoneData[zoneName];
+        const color = zoneColors[zoneName];
+        const pct = ((zd.count/total)*100).toFixed(1);
+        const barW = ((zd.count/maxZone)*100).toFixed(1);
+        
+        const card = document.createElement('div');
+        card.className = 'zone-card';
+        card.style.cssText = `--zone-color:${color}`;
+        
+        const statesHTML = zd.states.sort((a,b)=>b.count-a.count).map(s => {
+            const sw = ((s.count/zd.count)*100).toFixed(1);
+            return `<div class="state-row">
+                <span class="state-code">${s.code}</span>
+                <span class="state-name">${s.name}</span>
+                <div class="state-mini-track"><div class="state-mini-fill" style="--state-bar-width:${sw}%"></div></div>
+                <span class="state-num">${s.count}</span>
+            </div>`;
+        }).join('');
+
+        card.innerHTML = `
+            <div class="zone-accent-bg"></div>
+            <div class="zone-header">
+                <div class="zone-name">${zoneName}</div>
+                <div>
+                    <div class="zone-count">${zd.count}</div>
+                    <div class="zone-pct">${pct}% of total</div>
+                </div>
+            </div>
+            <div class="zone-bar-track"><div class="zone-bar-fill" style="--bar-width:${barW}%"></div></div>
+            <div class="zone-states">${statesHTML}</div>
+        `;
+        zonesGrid.appendChild(card);
+    });
+
+    let statesToRender = [];
+    if(filterZone === 'all') {
+        statesToRender = Object.entries(stateCounts).sort((a,b)=>b[1]-a[1]);
+    } else {
+        statesToRender = zoneData[filterZone].states.sort((a,b)=>b.count-a.count).map(s => [s.code, s.count]);
+    }
+
+    statesToRender.forEach(([code, count]) => {
+        const info = stateMap[code];
+        const color = zoneColors[info.zone];
+        const sw = ((count/maxState)*100).toFixed(1);
+        
+        const card = document.createElement('div');
+        card.className = 'state-card';
+        card.style.cssText = `--zone-color:${color}`;
+        card.innerHTML = `
+            <div class="state-card-name">${code}</div>
+            <div class="state-card-full">${info.name}</div>
+            <div class="state-card-top">
+                <div class="state-card-count">${count}</div>
+                <div class="state-card-zone">${info.zone}</div>
+            </div>
+            <div class="state-card-bar-track"><div class="state-card-bar-fill" style="--state-bar-width:${sw}%"></div></div>
+        `;
+        statesGrid.appendChild(card);
+    });
+
+    setTimeout(() => {
+        document.querySelectorAll('.zone-bar-fill, .state-mini-fill, .state-card-bar-fill').forEach(el => el.classList.add('animated'));
+    }, 100);
+}
+
+// --- Search Functionality ---
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.state-card');
+    cards.forEach(card => {
+        const name = card.querySelector('.state-card-full').textContent.toLowerCase();
+        const code = card.querySelector('.state-card-name').textContent.toLowerCase();
+        if(name.includes(term) || code.includes(term)) card.style.display = 'block';
+        else card.style.display = 'none';
+    });
+});
+
+// Initial Render
 filterData('all');
+
 </script>
 </body>
 </html>
