@@ -8,357 +8,57 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    /* ========================================
-    NAFDAC OFFICIAL CORPORATE THEME (LIGHT)
-    ========================================
-    */
     :root {
-        --bg: #f1f5f9;            /* Off-white/Light Gray */
-        --sidebar-bg: #052e16;    /* NAFDAC Deep Green */
-        --surface: #ffffff;       /* Pure White Cards */
-        --accent-green: #15803d;  /* Mid-Green */
-        --accent-red: #be123c;    /* NAFDAC Red */
-        --text-main: #0f172a;     /* Near Black */
-        --text-muted: #64748b;    /* Slate Gray */
-        --border: #e2e8f0;        /* Soft Border */
+        --bg: #f1f5f9;
+        --sidebar-bg: #052e16;
+        --surface: #ffffff;
+        --accent-green: #15803d;
+        --accent-red: #be123c;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
         --sidebar-width: 280px;
         --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-        background: var(--bg);
-        color: var(--text-main);
-        font-family: 'Inter', sans-serif;
-        display: flex;
-        min-height: 100vh;
-        overflow-x: hidden;
-    }
+    body { background: var(--bg); color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; min-height: 100vh; overflow-x: hidden; }
 
-    /* --- Sidebar Section --- */
-    .sidebar {
-        width: var(--sidebar-width);
-        background: var(--sidebar-bg);
-        color: #ffffff;
-        height: 100vh;
-        position: fixed;
-        display: flex;
-        flex-direction: column;
-        padding: 30px 20px;
-        z-index: 1000;
-        box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-    }
+    .sidebar { width: var(--sidebar-width); background: var(--sidebar-bg); color: #ffffff; height: 100vh; position: fixed; display: flex; flex-direction: column; padding: 30px 20px; z-index: 1000; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+    .sidebar-brand { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; }
+    .brand-circle { width: 45px; height: 45px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; color: var(--sidebar-bg); font-size: 22px; }
+    .brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 1px; }
 
-    .sidebar-brand {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 40px;
-    }
+    .search-container { margin-bottom: 30px; }
+    .mother-search { width: 100%; padding: 12px 15px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; font-size: 14px; outline: none; }
 
-    .brand-circle {
-        width: 45px;
-        height: 45px;
-        background: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 900;
-        color: var(--sidebar-bg);
-        font-size: 22px;
-    }
+    .nav-btn { width: 100%; padding: 12px 15px; background: transparent; border: none; color: rgba(255,255,255,0.7); text-align: left; font-size: 14px; cursor: pointer; border-radius: 6px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+    .nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,0.1); color: #fff; }
 
-    .brand-name {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 26px;
-        letter-spacing: 1px;
-    }
+    .main-wrapper { margin-left: var(--sidebar-width); width: calc(100% - var(--sidebar-width)); display: flex; flex-direction: column; }
+    header { background: var(--surface); padding: 30px 50px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .header-info h1 { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--sidebar-bg); }
 
-    /* Mother Search */
-    .search-container {
-        margin-bottom: 30px;
-    }
+    .period-selector { background: #f1f5f9; padding: 5px; border-radius: 10px; display: flex; gap: 5px; }
+    .period-btn { padding: 10px 20px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--text-muted); }
+    .period-btn.active { background: var(--sidebar-bg); color: #fff; }
 
-    .mother-search {
-        width: 100%;
-        padding: 12px 15px;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 8px;
-        color: #fff;
-        font-size: 14px;
-        outline: none;
-        transition: 0.3s;
-    }
+    .content-padding { padding: 40px 50px; }
+    .section-header { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 3px; color: var(--accent-red); margin-bottom: 25px; display: flex; align-items: center; gap: 15px; }
+    .section-header::after { content: ''; flex-grow: 1; height: 1px; background: var(--border); }
 
-    .mother-search:focus {
-        background: rgba(255,255,255,0.2);
-        border-color: #fff;
-    }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px; }
+    .stat-card { background: var(--surface); padding: 25px; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: var(--sidebar-bg); }
 
-    .nav-group {
-        flex-grow: 1;
-        overflow-y: auto;
-    }
+    .roller-card { background: var(--surface); padding: 30px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 40px; }
+    .roller-canvas-box { width: 100%; height: 400px; }
 
-    .nav-label {
-        font-size: 11px;
-        text-transform: uppercase;
-        color: rgba(255,255,255,0.4);
-        letter-spacing: 2px;
-        margin-bottom: 15px;
-        font-weight: 700;
-        display: block;
-    }
-
-    .nav-btn {
-        width: 100%;
-        padding: 12px 15px;
-        background: transparent;
-        border: none;
-        color: rgba(255,255,255,0.7);
-        text-align: left;
-        font-size: 14px;
-        cursor: pointer;
-        border-radius: 6px;
-        margin-bottom: 5px;
-        transition: 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .nav-btn:hover, .nav-btn.active {
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-    }
-
-    .btn-verified {
-        background: var(--accent-red);
-        color: #fff;
-        font-weight: 700;
-        padding: 15px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        margin-top: 20px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0 4px 10px rgba(190, 18, 60, 0.3);
-    }
-
-    /* --- Main Content Area --- */
-    .main-wrapper {
-        margin-left: var(--sidebar-width);
-        width: calc(100% - var(--sidebar-width));
-        display: flex;
-        flex-direction: column;
-    }
-
-    header {
-        background: var(--surface);
-        padding: 30px 50px;
-        border-bottom: 1px solid var(--border);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .header-info h1 {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 42px;
-        color: var(--sidebar-bg);
-    }
-
-    .header-info p {
-        color: var(--text-muted);
-        font-size: 14px;
-    }
-
-    /* Period Toggle */
-    .period-selector {
-        background: #f1f5f9;
-        padding: 5px;
-        border-radius: 10px;
-        display: flex;
-        gap: 5px;
-    }
-
-    .period-btn {
-        padding: 10px 20px;
-        border: none;
-        background: transparent;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 13px;
-        color: var(--text-muted);
-        transition: 0.3s;
-    }
-
-    .period-btn.active {
-        background: var(--sidebar-bg);
-        color: #fff;
-    }
-
-    /* Content Layout */
-    .content-padding {
-        padding: 40px 50px;
-    }
-
-    .section-header {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 16px;
-        letter-spacing: 3px;
-        color: var(--accent-red);
-        margin-bottom: 25px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .section-header::after {
-        content: '';
-        flex-grow: 1;
-        height: 1px;
-        background: var(--border);
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 25px;
-        margin-bottom: 40px;
-    }
-
-    .stat-card {
-        background: var(--surface);
-        padding: 25px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        box-shadow: var(--shadow);
-    }
-
-    .stat-val {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 36px;
-        color: var(--sidebar-bg);
-        margin: 5px 0;
-    }
-
-    .stat-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    /* The Roller (Horizontal Chart) */
-    .roller-card {
-        background: var(--surface);
-        padding: 30px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        margin-bottom: 40px;
-        box-shadow: var(--shadow);
-    }
-
-    .roller-container {
-        width: 100%;
-        overflow-x: auto;
-        padding-bottom: 15px;
-    }
-
-    .roller-canvas-box {
-        width: 1800px; /* Expansive width for 37 items */
-        height: 350px;
-    }
-
-    /* Data Table */
-    .table-container {
-        background: var(--surface);
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        overflow: hidden;
-        box-shadow: var(--shadow);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    th {
-        background: #f8fafc;
-        padding: 18px 20px;
-        text-align: left;
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        border-bottom: 2px solid var(--border);
-    }
-
-    td {
-        padding: 15px 20px;
-        border-bottom: 1px solid var(--border);
-        font-size: 14px;
-    }
-
-    tr:hover { background: #fdfdfd; }
-
+    .table-container { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow); }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f8fafc; padding: 18px 20px; text-align: left; font-size: 12px; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px solid var(--border); }
+    td { padding: 15px 20px; border-bottom: 1px solid var(--border); font-size: 14px; }
     .td-bold { font-weight: 700; color: var(--sidebar-bg); }
-    .td-red { font-weight: 700; color: var(--accent-red); }
-
-    /* Directory View (Staff List) */
-    #directoryView {
-        display: none;
-    }
-
-    .staff-search-bar {
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        margin-bottom: 30px;
-        display: flex;
-        gap: 15px;
-    }
-
-    .staff-input {
-        flex-grow: 1;
-        padding: 12px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-    }
-
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--sidebar-bg); }
-
-    /* Zone Grid */
-    .zone-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 15px;
-        margin-bottom: 40px;
-    }
-    .zone-box {
-        background: #fff;
-        padding: 15px;
-        border-left: 4px solid var(--accent-green);
-        border-radius: 4px;
-        box-shadow: var(--shadow);
-    }
-    .z-name { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px;}
-    .z-val { font-family: 'Bebas Neue'; font-size: 24px; color: var(--sidebar-bg); }
-
 </style>
 </head>
 <body>
@@ -368,32 +68,21 @@
         <div class="brand-circle">N</div>
         <div class="brand-name">NAFDAC NOMINAL</div>
     </div>
-
     <div class="search-container">
-        <input type="text" class="mother-search" id="motherSearch" placeholder="Mother Search (Global)..." onkeyup="globalSearch()">
+        <input type="text" class="mother-search" id="motherSearch" placeholder="Search Global Data..." onkeyup="globalSearch()">
     </div>
-
     <div class="nav-group">
-        <span class="nav-label">Main Views</span>
-        <button class="nav-btn active" id="btnDash" onclick="switchView('dashboard')">
-            <span>📊</span> Dashboard Overview
-        </button>
-        
-        <span class="nav-label" style="margin-top:25px">Geopolitical Zones</span>
-        <div id="zoneLinks">
-            </div>
+        <button class="nav-btn active" onclick="switchView('dashboard')">📊 Dashboard Overview</button>
+        <button class="nav-btn" onclick="switchView('directory')">👤 Verified Staff Roll</button>
     </div>
-
-    <button class="btn-verified" onclick="switchView('directory')">Verified Staff Roll</button>
 </div>
 
 <div class="main-wrapper">
     <header>
         <div class="header-info">
             <h1 id="viewTitle">Regional Staff Distribution</h1>
-            <p>Official Nominal Roll Comparative Analysis</p>
+            <p>Official Nominal Roll Comparative Analysis (2017-2026)</p>
         </div>
-
         <div class="period-selector">
             <button class="period-btn" onclick="setYear('2017', this)">2017</button>
             <button class="period-btn" onclick="setYear('2022', this)">2022</button>
@@ -403,102 +92,66 @@
     </header>
 
     <div class="content-padding" id="dashboardView">
-        
-        <div class="section-header">National Totals</div>
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">Total Staff Roll</div>
+                <div class="stat-label">Total Staff Count</div>
                 <div class="stat-val" id="totalCount">2,031</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Verified Percentage</div>
-                <div class="stat-val">100%</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">States Covered</div>
                 <div class="stat-val">37</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Current Roll Period</div>
-                <div class="stat-val" id="periodDisplay">FEB 2026</div>
-            </div>
         </div>
 
-        <div class="section-header">Zonal Density Aggregates</div>
-        <div class="zone-grid" id="zonalSummary">
-            </div>
-
-        <div class="section-header">State Comparative Roller (2017 - 2026)</div>
+        <div class="section-header">National Comparative View</div>
         <div class="roller-card">
-            <div class="roller-container">
-                <div class="roller-canvas-box">
-                    <canvas id="rollerChart"></canvas>
-                </div>
+            <div class="roller-canvas-box">
+                <canvas id="rollerChart"></canvas>
             </div>
         </div>
 
-        <div class="section-header">Detailed Comparative Data</div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>Zone</th>
+                        <th>2017</th>
+                        <th>2022</th>
+                        <th>2024</th>
+                        <th style="background:#fff1f2">2026</th>
+                    </tr>
+                </thead>
+                <tbody id="comparisonTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="content-padding" id="directoryView" style="display:none">
+        <div class="section-header">Verified Personnel Directory (2026)</div>
         <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>S/N</th>
-                        <th>State of Origin</th>
-                        <th>Geopolitical Zone</th>
-                        <th>2017 Roll</th>
-                        <th>2022 Roll</th>
-                        <th>2024 Roll</th>
-                        <th style="background: #fff1f2;">2026 Roll</th>
-                    </tr>
-                </thead>
-                <tbody id="comparisonTableBody">
-                    </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="content-padding" id="directoryView">
-        <div class="section-header">Authenticated Personnel Directory (2026)</div>
-        
-        <div class="staff-search-bar">
-            <input type="text" class="staff-input" id="staffFilter" placeholder="Search by Name, Staff ID, or Rank..." onkeyup="filterStaffTable()">
-            <select class="staff-input" style="max-width:200px;" id="stateFilter" onchange="filterStaffTable()">
-                <option value="all">All States</option>
-            </select>
-        </div>
-
-        <div class="table-container">
-            <table id="fullStaffTable">
-                <thead>
-                    <tr>
-                        <th>S/N</th>
                         <th>Staff ID</th>
                         <th>Full Name</th>
-                        <th>Rank / Designation</th>
-                        <th>Department</th>
-                        <th>State of Origin</th>
-                        <th>Status</th>
+                        <th>Rank</th>
+                        <th>Dept</th>
+                        <th>State</th>
                     </tr>
                 </thead>
-                <tbody id="directoryTableBody">
-                    </tbody>
+                <tbody id="directoryTableBody"></tbody>
             </table>
         </div>
     </div>
 </div>
 
 <script>
-/* ========================================
-JAVASCRIPT: DATA & APPLICATION LOGIC
-========================================
-*/
-
-// 1. DATA INFRASTRUCTURE
 const stateMap = {
     'ABI': { name: 'Abia', zone: 'South East' }, 'ADAMAWA': { name: 'Adamawa', zone: 'North East' }, 'AKW': { name: 'Akwa Ibom', zone: 'South South' }, 'ANA': { name: 'Anambra', zone: 'South East' }, 'BAU': { name: 'Bauchi', zone: 'North East' }, 'BAY': { name: 'Bayelsa', zone: 'South South' }, 'BEN': { name: 'Benue', zone: 'North Central' }, 'BOR': { name: 'Borno', zone: 'North East' }, 'CRO': { name: 'Cross River', zone: 'South South' }, 'DEL': { name: 'Delta', zone: 'South South' }, 'EBO': { name: 'Ebonyi', zone: 'South East' }, 'EDO': { name: 'Edo', zone: 'South South' }, 'EKI': { name: 'Ekiti', zone: 'South West' }, 'ENU': { name: 'Enugu', zone: 'South East' }, 'FCT': { name: 'FCT (Abuja)', zone: 'North Central' }, 'GOM': { name: 'Gombe', zone: 'North East' }, 'IMO': { name: 'Imo', zone: 'South East' }, 'JIG': { name: 'Jigawa', zone: 'North West' }, 'KAD': { name: 'Kaduna', zone: 'North West' }, 'KAN': { name: 'Kano', zone: 'North West' }, 'KAT': { name: 'Katsina', zone: 'North West' }, 'KEB': { name: 'Kebbi', zone: 'North West' }, 'KOG': { name: 'Kogi', zone: 'North Central' }, 'KWA': { name: 'Kwara', zone: 'North Central' }, 'LAG': { name: 'Lagos', zone: 'South West' }, 'NAS': { name: 'Nasarawa', zone: 'North Central' }, 'NIG': { name: 'Niger', zone: 'North Central' }, 'OGU': { name: 'Ogun', zone: 'South West' }, 'OND': { name: 'Ondo', zone: 'South West' }, 'OSU': { name: 'Osun', zone: 'South West' }, 'OYO': { name: 'Oyo', zone: 'South West' }, 'PLA': { name: 'Plateau', zone: 'North Central' }, 'RIV': { name: 'Rivers', zone: 'South South' }, 'SOK': { name: 'Sokoto', zone: 'North West' }, 'TAR': { name: 'Taraba', zone: 'North East' }, 'YOB': { name: 'Yobe', zone: 'North East' }, 'ZAM': { name: 'Zamfara', zone: 'North West' }
 };
 
-// Comparative data (Sample counts based on provided nominal rolls)
 const comparisonData = {
     "ABI": {"2017": 57, "2022": 51, "2024": 45, "2026": 42}, "ADAMAWA": {"2017": 59, "2022": 61, "2024": 62, "2026": 62}, "AKW": {"2017": 83, "2022": 69, "2024": 65, "2026": 62}, "ANA": {"2017": 152, "2022": 129, "2024": 122, "2026": 119}, "BAU": {"2017": 32, "2022": 30, "2024": 30, "2026": 31}, "BAY": {"2017": 30, "2022": 28, "2024": 28, "2026": 27}, "BEN": {"2017": 115, "2022": 99, "2024": 94, "2026": 91}, "BOR": {"2017": 67, "2022": 68, "2024": 68, "2026": 69}, "CRO": {"2017": 50, "2022": 52, "2024": 52, "2026": 51}, "DEL": {"2017": 114, "2022": 102, "2024": 92, "2026": 86}, "EBO": {"2017": 40, "2022": 44, "2024": 44, "2026": 45}, "EDO": {"2017": 106, "2022": 91, "2024": 82, "2026": 79}, "EKI": {"2017": 54, "2022": 48, "2024": 44, "2026": 42}, "ENU": {"2017": 76, "2022": 75, "2024": 71, "2026": 68}, "FCT": {"2017": 17, "2022": 16, "2024": 18, "2026": 19}, "GOM": {"2017": 43, "2022": 44, "2024": 45, "2026": 45}, "IMO": {"2017": 130, "2022": 112, "2024": 105, "2026": 100}, "JIG": {"2017": 29, "2022": 35, "2024": 35, "2026": 34}, "KAD": {"2017": 73, "2022": 71, "2024": 68, "2026": 66}, "KAN": {"2017": 40, "2022": 45, "2024": 46, "2026": 47}, "KAT": {"2017": 38, "2022": 44, "2024": 44, "2026": 43}, "KEB": {"2017": 35, "2022": 37, "2024": 39, "2026": 40}, "KOG": {"2017": 119, "2022": 113, "2024": 108, "2026": 101}, "KWA": {"2017": 89, "2022": 85, "2024": 80, "2026": 76}, "LAG": {"2017": 42, "2022": 36, "2024": 37, "2026": 38}, "NAS": {"2017": 46, "2022": 41, "2024": 41, "2026": 40}, "NIG": {"2017": 52, "2022": 49, "2024": 49, "2026": 48}, "OGU": {"2017": 73, "2022": 66, "2024": 62, "2026": 59}, "OND": {"2017": 68, "2022": 58, "2024": 56, "2026": 55}, "OSU": {"2017": 79, "2022": 69, "2024": 68, "2026": 66}, "OYO": {"2017": 83, "2022": 74, "2024": 72, "2026": 70}, "PLA": {"2017": 61, "2022": 57, "2024": 56, "2026": 55}, "RIV": {"2017": 40, "2022": 44, "2024": 44, "2026": 43}, "SOK": {"2017": 24, "2022": 26, "2024": 27, "2026": 28}, "TAR": {"2017": 27, "2022": 26, "2024": 26, "2026": 26}, "YOB": {"2017": 24, "2022": 25, "2024": 26, "2026": 28}, "ZAM": {"2017": 18, "2022": 21, "2024": 21, "2026": 21}
 };
@@ -508,184 +161,57 @@ const staffRoll2026 = [
     { sn: 2, id: 'SS/130', name: 'MOMODU RAMETU O', rank: 'DIRECTOR', dept: 'NCS', state: 'EDO' },
     { sn: 3, id: 'SS/1075', name: 'EDWARDS EVA OBIAGELI', rank: 'DIRECTOR', dept: 'FS&AN', state: 'LAG' },
     { sn: 4, id: 'SS/534', name: 'SHABA MOHAMMED', rank: 'DIRECTOR', dept: 'REGULATORY', state: 'NIG' },
-    { sn: 5, id: 'SS/781', name: 'SONNY-AFOEKELU UCHENNA M', rank: 'DIRECTOR', dept: 'FS&AN', state: 'ANA' },
-    { sn: 6, id: 'SS/1241', name: 'EIMUNJEZE MONICA D', rank: 'DIRECTOR', dept: 'LSO', state: 'BEN' },
-    { sn: 7, id: 'SS/1683', name: 'ADEBAYO SAMSON BABATUNDE', rank: 'DIRECTOR', dept: 'PRS', state: 'KWA' },
-    { sn: 2027, id: 'JS/1383', name: 'MUSTAPHA LAWAN ALI', rank: 'SNR DRIVER', dept: 'HRM', state: 'YOB' },
-    { sn: 2028, id: 'JS/1384', name: 'OGBAKA DANIEL MARK', rank: 'SENIOR DRIVER/MECH. II', dept: 'HRM', state: 'CRO' }
+    { sn: 2027, id: 'JS/1383', name: 'MUSTAPHA LAWAN ALI', rank: 'SNR DRIVER', dept: 'HRM', state: 'YOB' }
 ];
 
 let activeYear = '2026';
 let chartInstance = null;
 
-// 2. CORE FUNCTIONS
-function init() {
-    renderDashboard();
-    renderDirectory();
-    populateFilters();
-    renderZoneNav();
-}
+function init() { renderDashboard(); renderDirectory(); }
 
 function renderDashboard() {
     const tableBody = document.getElementById('comparisonTableBody');
-    const zonalSummary = document.getElementById('zonalSummary');
     tableBody.innerHTML = '';
-    zonalSummary.innerHTML = '';
+    let total = 0;
 
-    let totalStaff = 0;
-    let zones = {};
-
-    Object.keys(stateMap).forEach((key, idx) => {
+    Object.keys(stateMap).forEach(key => {
         const s = stateMap[key];
         const d = comparisonData[key];
-        totalStaff += d[activeYear];
-
-        // Aggregating Zones
-        if(!zones[s.zone]) zones[s.zone] = 0;
-        zones[s.zone] += d[activeYear];
-
-        // Populate Table
-        tableBody.innerHTML += `
-            <tr>
-                <td>${idx + 1}</td>
-                <td class="td-bold">${s.name}</td>
-                <td>${s.zone}</td>
-                <td>${d['2017']}</td>
-                <td>${d['2022']}</td>
-                <td>${d['2024']}</td>
-                <td class="td-red" style="background: #fff1f2;">${d['2026']}</td>
-            </tr>
-        `;
+        total += d[activeYear];
+        tableBody.innerHTML += `<tr><td class="td-bold">${s.name}</td><td>${s.zone}</td><td>${d['2017']}</td><td>${d['2022']}</td><td>${d['2024']}</td><td class="td-bold" style="background:#fff1f2">${d['2026']}</td></tr>`;
     });
-
-    document.getElementById('totalCount').innerText = totalStaff.toLocaleString();
-    
-    // Render Zone Boxes
-    Object.keys(zones).forEach(z => {
-        zonalSummary.innerHTML += `
-            <div class="zone-box">
-                <div class="z-name">${z}</div>
-                <div class="z-val">${zones[z]}</div>
-            </div>
-        `;
-    });
-
-    renderRoller();
+    document.getElementById('totalCount').innerText = total.toLocaleString();
+    renderChart();
 }
 
-function renderRoller() {
+function renderChart() {
     const ctx = document.getElementById('rollerChart').getContext('2d');
     if(chartInstance) chartInstance.destroy();
-
-    const labels = Object.keys(comparisonData).map(k => stateMap[k].name);
-    const dataCurrent = Object.keys(comparisonData).map(k => comparisonData[k][activeYear]);
-    const dataPast = Object.keys(comparisonData).map(k => comparisonData[k]['2017']);
-
     chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: activeYear + ' Roll',
-                    data: dataCurrent,
-                    backgroundColor: '#15803d',
-                    borderRadius: 4
-                },
-                {
-                    label: '2017 Baseline',
-                    data: dataPast,
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: 4
-                }
-            ]
+            labels: Object.keys(comparisonData).map(k => stateMap[k].name),
+            datasets: [{ label: activeYear + ' Roll', data: Object.keys(comparisonData).map(k => comparisonData[k][activeYear]), backgroundColor: '#15803d' }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top' } },
-            scales: {
-                y: { grid: { color: '#f1f5f9' }, ticks: { font: { size: 11 } } },
-                x: { grid: { display: false }, ticks: { font: { size: 10, weight: 'bold' } } }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
     });
 }
 
 function renderDirectory() {
     const body = document.getElementById('directoryTableBody');
-    body.innerHTML = '';
-    staffRoll2026.forEach(s => {
-        body.innerHTML += `
-            <tr>
-                <td>${s.sn}</td>
-                <td style="font-family:monospace; color:var(--accent-red); font-weight:700;">${s.id}</td>
-                <td class="td-bold">${s.name}</td>
-                <td>${s.rank}</td>
-                <td>${s.dept}</td>
-                <td>${stateMap[s.state] ? stateMap[s.state].name : s.state}</td>
-                <td><span style="background:#dcfce7; color:#166534; padding:4px 8px; border-radius:12px; font-size:10px; font-weight:700;">VERIFIED</span></td>
-            </tr>
-        `;
-    });
+    body.innerHTML = staffRoll2026.map(s => `<tr><td>${s.sn}</td><td>${s.id}</td><td class="td-bold">${s.name}</td><td>${s.rank}</td><td>${s.dept}</td><td>${stateMap[s.state].name}</td></tr>`).join('');
 }
 
-// Interactivity
 function setYear(year, btn) {
     activeYear = year;
-    document.getElementById('periodDisplay').innerText = year === '2026' ? 'FEB 2026' : 'DEC ' + year;
     document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     renderDashboard();
 }
 
 function switchView(view) {
-    if(view === 'dashboard') {
-        document.getElementById('dashboardView').style.display = 'block';
-        document.getElementById('directoryView').style.display = 'none';
-        document.getElementById('viewTitle').innerText = "Regional Staff Distribution";
-        document.getElementById('btnDash').classList.add('active');
-    } else {
-        document.getElementById('dashboardView').style.display = 'none';
-        document.getElementById('directoryView').style.display = 'block';
-        document.getElementById('viewTitle').innerText = "Verified Nominal Roll";
-        document.getElementById('btnDash').classList.remove('active');
-    }
-}
-
-function populateFilters() {
-    const selector = document.getElementById('stateFilter');
-    Object.keys(stateMap).forEach(k => {
-        selector.innerHTML += `<option value="${k}">${stateMap[k].name}</option>`;
-    });
-}
-
-function renderZoneNav() {
-    const container = document.getElementById('zoneLinks');
-    const uniqueZones = [...new Set(Object.values(stateMap).map(s => s.zone))];
-    uniqueZones.forEach(z => {
-        container.innerHTML += `<button class="nav-btn" onclick="filterByZone('${z}')"><span>📍</span> ${z}</button>`;
-    });
-}
-
-function globalSearch() {
-    const query = document.getElementById('motherSearch').value.toLowerCase();
-    const rows = document.querySelectorAll('#comparisonTableBody tr');
-    rows.forEach(row => {
-        row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
-    });
-}
-
-function filterStaffTable() {
-    const query = document.getElementById('staffFilter').value.toLowerCase();
-    const state = document.getElementById('stateFilter').value;
-    const rows = document.querySelectorAll('#directoryTableBody tr');
-    
-    rows.forEach(row => {
-        const textMatch = row.innerText.toLowerCase().includes(query);
-        const stateMatch = state === 'all' || row.innerText.includes(stateMap[state].name);
-        row.style.display = (textMatch && stateMatch) ? '' : 'none';
-    });
+    document.getElementById('dashboardView').style.display = view === 'dashboard' ? 'block' : 'none';
+    document.getElementById('directoryView').style.display = view === 'directory' ? 'block' : 'none';
 }
 
 window.onload = init;
