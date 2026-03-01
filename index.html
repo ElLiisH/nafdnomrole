@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NAFDAC Staff Distribution — Live Nominal Roll 2026</title>
 
-  <!-- ✅ Correct Google Fonts link (must be a real <link> tag) -->
+  <!-- Correct Google Fonts link (DM Sans + Bebas Neue) -->
   https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,700;1,9..40,300&display=swap
 
   <style>
+  /* =========================
+     NAFDAC-themed UI (white base, brand-green sidebar, red accents)
+     ========================= */
+
   :root {
     --bg:#FFFFFF; --text:#0A0F1A;
 
@@ -50,8 +54,15 @@
     font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:var(--on-brand);
     margin-bottom:30px; display:flex; align-items:center; gap:10px;
   }
+
+  /* Force the logo to match the text height */
   .naf-logo{
-    height:20px; width:auto; object-fit:contain; display:inline-block; vertical-align:middle; margin-right:8px;
+    height:20px;      /* adjust to 18px or 22px if you prefer */
+    width:auto;       /* keep aspect ratio */
+    object-fit:contain;
+    display:inline-block;
+    vertical-align:middle;
+    margin-right:8px; /* spacing before the text */
   }
 
   .mother-search{position:relative;margin-bottom:30px}
