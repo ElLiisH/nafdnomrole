@@ -348,7 +348,7 @@
         <div class="comp-legend">
             <div class="legend-item"><div class="legend-box bar-2017"></div> 2017 Roll</div>
             <div class="legend-item"><div class="legend-box bar-2022"></div> 2022 Roll</div>
-            <div class="legend-item"><div class="legend-box bar-2026"></div> Current (2026)</div>
+            <div class="legend-item"><div class="legend-box bar-2026"></div> 2024 - Current</div>
         </div>
         <div class="comp-scroll-wrapper">
             <div class="comp-flex-container" id="compChartContainer"></div>
@@ -362,7 +362,7 @@
                       <th>State of Origin</th>
                       <th>2017 Roll</th>
                       <th>2022 Roll</th>
-                      <th>2026 Current</th>
+                      <th>2024 - Current</th>
                       <th>Trend (%)</th>
                   </tr>
               </thead>
@@ -456,13 +456,12 @@ function renderComparisonChart(filterZone) {
     // ALPHABETICAL SORT based on full state name
     codes.sort((a,b) => stateMap[a].name.localeCompare(stateMap[b].name));
     
-    const maxVal = 160; // Scaling ceiling
+    const maxVal = 160; 
     
     codes.forEach(code => {
         const d = comparisonData[code];
         const stateName = stateMap[code].name;
         
-        // Render Chart Bar Group
         const group = document.createElement('div');
         group.className = 'state-group';
         group.innerHTML = `
@@ -475,9 +474,8 @@ function renderComparisonChart(filterZone) {
         `;
         container.appendChild(group);
 
-        // Render Table Row
         const diff = d['2026'] - d['2017'];
-        const perc = ((diff / d['2017']) * 100).toFixed(1);
+        const perc = d['2017'] > 0 ? ((diff / d['2017']) * 100).toFixed(1) : '100';
         const trendClass = diff >= 0 ? 'trend-up' : 'trend-down';
         const sign = diff >= 0 ? '+' : '';
 
