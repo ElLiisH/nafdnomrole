@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NAFDAC Staff Distribution — Historical Comparison</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,300;0,500;0,700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
-    /* REQUIRED CHANGE: White/Off-white Background Theme */
     --bg: #f8f9fa;
     --surface: #ffffff;
     --surface2: #f1f3f5;
@@ -30,7 +29,6 @@
     display: flex;
   }
 
-  /* --- Sidebar UI --- */
   .sidebar {
     width: var(--sidebar-width);
     background: var(--surface);
@@ -47,11 +45,6 @@
     font-size: 26px;
     letter-spacing: 1px;
     margin-bottom: 30px;
-    color: var(--text);
-  }
-  .search-box {
-    position: relative;
-    margin-bottom: 30px;
   }
   .search-box input {
     width: 100%;
@@ -59,158 +52,77 @@
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 8px;
-    color: var(--text);
     outline: none;
-  }
-  .nav-group { margin-bottom: 25px; }
-  .nav-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--muted);
-    margin-bottom: 15px;
-    display: block;
-  }
-  .zone-btn {
-    display: block;
-    width: 100%;
-    padding: 10px 15px;
-    margin-bottom: 5px;
-    background: transparent;
-    border: none;
-    text-align: left;
-    color: var(--muted);
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.2s;
-  }
-  .zone-btn:hover, .zone-btn.active {
-    background: var(--surface2);
-    color: var(--accent);
-    font-weight: 700;
-  }
-
-  /* --- Main Viewport --- */
-  .main-content {
-    margin-left: var(--sidebar-width);
-    flex: 1;
-    padding: 40px;
-    max-width: 1600px;
-  }
-
-  header { margin-bottom: 40px; }
-  .header-tag {
-    display: inline-block;
-    padding: 4px 12px;
-    background: var(--accent);
-    color: white;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 15px;
-  }
-  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 50px; line-height: 1; }
-  
-  /* --- Chart Container --- */
-  .chart-section {
-    background: var(--surface);
-    padding: 30px;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    margin-bottom: 40px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-  }
-
-  /* --- Data Grid System --- */
-  .grid-header {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
     margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
-  .zones-grid, .states-grid {
+  .nav-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 10px; display: block; }
+  
+  .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 40px; max-width: 1600px; }
+  header { margin-bottom: 40px; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 50px; line-height: 1; }
+
+  .chart-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin-bottom: 40px;
   }
-  .zone-card {
+  .chart-section {
     background: var(--surface);
-    padding: 20px;
-    border-radius: 12px;
-    border-left: 5px solid var(--zone-color);
-    border-top: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .zone-name { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-  .zone-count { font-family: 'Bebas Neue', sans-serif; font-size: 32px; }
-
-  /* --- Detailed Table --- */
-  .table-container {
-    background: var(--surface);
+    padding: 25px;
     border-radius: 16px;
     border: 1px solid var(--border);
-    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
   }
+  .chart-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; margin-bottom: 15px; color: var(--accent); }
+
+  .table-container { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
   table { width: 100%; border-collapse: collapse; }
   th { background: var(--surface2); padding: 15px 20px; text-align: left; font-size: 13px; color: var(--muted); }
-  td { padding: 15px 20px; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .td-bold { font-weight: 700; color: var(--text); }
-  .change-pos { color: var(--accent2); font-weight: 700; }
-
-  @media (max-width: 1024px) {
-    .sidebar { width: 80px; padding: 20px 10px; }
-    .sidebar-header, .nav-label, .zone-btn span { display: none; }
-    .main-content { margin-left: 80px; }
-  }
+  td { padding: 12px 20px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .td-bold { font-weight: 700; }
+  .down { color: var(--accent3); font-weight: bold; }
+  .up { color: var(--accent2); font-weight: bold; }
 </style>
 </head>
 <body>
 
 <div class="sidebar">
   <div class="sidebar-header">NAFDAC ANALYTICS</div>
-  
   <div class="search-box">
-    <input type="text" id="globalSearch" placeholder="Search state..." onkeyup="handleSearch()">
+    <input type="text" id="globalSearch" placeholder="Filter states..." onkeyup="handleSearch()">
   </div>
-
-  <div class="nav-group">
-    <span class="nav-label">GEOPOLITICAL ZONES</span>
-    <div id="zoneNavList">
-      <button class="zone-btn active" onclick="filterByZone('all')">All Zones</button>
-    </div>
-  </div>
+  <span class="nav-label">Historical View</span>
+  <p style="font-size: 12px; color: var(--muted)">Displaying all 36 States + FCT alphabetically.</p>
 </div>
 
 <div class="main-content">
   <header>
-    <span class="header-tag">HISTORICAL DATA ANALYSIS</span>
-    <h1>Staff Distribution Growth</h1>
-    <p style="color: var(--muted)">Comparing Nominal Roll data for years 2017, 2022, and 2024</p>
+    <h1>Staff Nominal Roll Comparison</h1>
+    <p style="color: var(--muted)">Comprehensive Comparison: 2017 vs 2022 vs 2024</p>
   </header>
 
-  <div class="chart-section">
-    <canvas id="historicalChart" height="100"></canvas>
+  <div class="chart-container">
+    <div class="chart-section">
+      <div class="chart-title">Zonal Comparison (Total Staff)</div>
+      <canvas id="zonalChart"></canvas>
+    </div>
+    <div class="chart-section">
+      <div class="chart-title">Growth Trend (National)</div>
+      <canvas id="trendChart"></canvas>
+    </div>
   </div>
 
-  <div class="grid-header">Zone Summary</div>
-  <div class="zones-grid" id="zonesGrid"></div>
-
-  <div class="grid-header">State Breakdown</div>
   <div class="table-container">
     <table>
       <thead>
         <tr>
-          <th>State of Origin</th>
+          <th>State / Territory (Alphabetical)</th>
           <th>Zone</th>
-          <th>2017 Count</th>
-          <th>2022 Count</th>
-          <th>2024 Count</th>
-          <th>Growth (17-24)</th>
+          <th>2017</th>
+          <th>2022</th>
+          <th>2024</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody id="mainTableBody"></tbody>
@@ -219,153 +131,113 @@
 </div>
 
 <script>
-/** * UPDATED DATA OBJECT
- * Based on user files for 2017, 2022, 2024.
- */
-const stateMap = {
-    'ANA': { name: 'Anambra', zone: 'South East' },
-    'BOR': { name: 'Borno', zone: 'North East' },
-    'DEL': { name: 'Delta', zone: 'South South' },
-    'EDO': { name: 'Edo', zone: 'South South' },
-    'KAD': { name: 'Kaduna', zone: 'North West' },
-    'KOG': { name: 'Kogi', zone: 'North Central' },
-    'KWA': { name: 'Kwara', zone: 'North Central' },
-    'OSU': { name: 'Osun', zone: 'South West' },
-    'LAG': { name: 'Lagos', zone: 'South West' },
-    'KAN': { name: 'Kano', zone: 'North West' }
+const zoneMap = {
+    "North Central": ["Benue", "FCT (Abuja)", "Kogi", "Kwara", "Nasarawa", "Niger", "Plateau"],
+    "North East": ["Adamawa", "Bauchi", "Borno", "Gombe", "Taraba", "Yobe"],
+    "North West": ["Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Sokoto", "Zamfara"],
+    "South East": ["Abia", "Anambra", "Ebonyi", "Enugu", "Imo"],
+    "South South": ["Akwa Ibom", "Bayelsa", "Cross River", "Delta", "Edo", "Rivers"],
+    "South West": ["Ekiti", "Lagos", "Ogun", "Ondo", "Osun", "Oyo"]
 };
 
-const zoneColors = {
-    'North Central': '#3b82f6',
-    'North East': '#10b981',
-    'North West': '#f59e0b',
-    'South East': '#8b5cf6',
-    'South South': '#ec4899',
-    'South West': '#f43f5e'
+// FULL ALPHABETICAL DATA (36 States + FCT)
+const rawData = {
+    "Abia": [51, 50, 48], "Adamawa": [32, 31, 30], "Akwa Ibom": [51, 47, 45], "Anambra": [148, 134, 129],
+    "Bauchi": [35, 32, 31], "Bayelsa": [14, 14, 14], "Benue": [47, 42, 39], "Borno": [42, 41, 39],
+    "Cross River": [38, 36, 34], "Delta": [83, 77, 73], "Ebonyi": [19, 19, 18], "Edo": [96, 92, 87],
+    "Ekiti": [32, 31, 29], "Enugu": [69, 62, 61], "FCT (Abuja)": [48, 44, 43], "Gombe": [21, 20, 19],
+    "Imo": [79, 71, 67], "Jigawa": [19, 19, 18], "Kaduna": [71, 69, 65], "Kano": [76, 69, 64],
+    "Katsina": [40, 38, 37], "Kebbi": [21, 20, 19], "Kogi": [71, 68, 63], "Kwara": [64, 60, 58],
+    "Lagos": [101, 92, 89], "Nasarawa": [33, 31, 30], "Niger": [44, 41, 38], "Ogun": [97, 93, 91],
+    "Ondo": [73, 70, 67], "Osun": [81, 79, 74], "Oyo": [88, 83, 82], "Plateau": [36, 34, 33],
+    "Rivers": [44, 42, 40], "Sokoto": [25, 24, 22], "Taraba": [19, 18, 18], "Yobe": [16, 16, 16], "Zamfara": [15, 15, 14]
 };
-
-const historicalData = {
-    'ANA': { '17': 62, '22': 78, '24': 85 },
-    'BOR': { '17': 31, '22': 42, '24': 44 },
-    'DEL': { '17': 48, '22': 55, '24': 60 },
-    'EDO': { '17': 55, '22': 67, '24': 72 },
-    'KAD': { '17': 71, '22': 89, '24': 95 },
-    'KOG': { '17': 28, '22': 38, '24': 41 },
-    'KWA': { '17': 44, '22': 50, '24': 53 },
-    'OSU': { '17': 57, '22': 72, '24': 78 },
-    'LAG': { '17': 92, '22': 110, '24': 118 },
-    'KAN': { '17': 66, '22': 81, '24': 88 }
-};
-
-let currentFilter = 'all';
-let chartInstance = null;
 
 function init() {
-    renderSidebar();
-    renderAll();
-    renderChart();
+    renderTable();
+    renderCharts();
 }
 
-function renderSidebar() {
-    const nav = document.getElementById('zoneNavList');
-    Object.keys(zoneColors).forEach(z => {
-        const btn = document.createElement('button');
-        btn.className = 'zone-btn';
-        btn.innerHTML = `<span>${z}</span>`;
-        btn.onclick = () => filterByZone(z);
-        nav.appendChild(btn);
+function renderTable() {
+    const tbody = document.getElementById('mainTableBody');
+    const sortedStates = Object.keys(rawData).sort();
+    
+    sortedStates.forEach(state => {
+        const vals = rawData[state];
+        const zone = Object.keys(zoneMap).find(z => zoneMap[z].includes(state));
+        const statusClass = vals[2] < vals[0] ? 'down' : 'up';
+        const arrow = vals[2] < vals[0] ? '▼' : '▲';
+
+        tbody.innerHTML += `
+            <tr>
+                <td class="td-bold">${state}</td>
+                <td>${zone}</td>
+                <td>${vals[0]}</td>
+                <td>${vals[1]}</td>
+                <td class="td-bold">${vals[2]}</td>
+                <td class="${statusClass}">${arrow} ${Math.abs(vals[2]-vals[0])}</td>
+            </tr>`;
     });
 }
 
-function renderAll() {
-    const tableBody = document.getElementById('mainTableBody');
-    const zonesGrid = document.getElementById('zonesGrid');
-    tableBody.innerHTML = '';
-    zonesGrid.innerHTML = '';
+function renderCharts() {
+    // 1. Zonal Aggregation
+    const zonalData = { labels: Object.keys(zoneMap), y17: [], y22: [], y24: [] };
+    
+    Object.keys(zoneMap).forEach(zone => {
+        let sum17 = 0, sum22 = 0, sum24 = 0;
+        zoneMap[zone].forEach(state => {
+            sum17 += rawData[state][0];
+            sum22 += rawData[state][1];
+            sum24 += rawData[state][2];
+        });
+        zonalData.y17.push(sum17);
+        zonalData.y22.push(sum22);
+        zonalData.y24.push(sum24);
+    });
 
-    const zoneAggregates = {};
-    Object.keys(zoneColors).forEach(z => zoneAggregates[z] = { c17: 0, c22: 0, c24: 0 });
+    const ctxZonal = document.getElementById('zonalChart').getContext('2d');
+    new Chart(ctxZonal, {
+        type: 'bar',
+        data: {
+            labels: zonalData.labels,
+            datasets: [
+                { label: '2017', data: zonalData.y17, backgroundColor: '#cbd5e1' },
+                { label: '2022', data: zonalData.y22, backgroundColor: '#3b82f6' },
+                { label: '2024', data: zonalData.y24, backgroundColor: '#2563eb' }
+            ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
 
-    Object.keys(stateMap).forEach(key => {
-        const state = stateMap[key];
-        const data = historicalData[key];
-        
-        // Aggregate zone data
-        zoneAggregates[state.zone].c17 += data['17'];
-        zoneAggregates[state.zone].c22 += data['22'];
-        zoneAggregates[state.zone].c24 += data['24'];
+    // 2. National Trend Line
+    const total17 = zonalData.y17.reduce((a, b) => a + b, 0);
+    const total22 = zonalData.y22.reduce((a, b) => a + b, 0);
+    const total24 = zonalData.y24.reduce((a, b) => a + b, 0);
 
-        if (currentFilter === 'all' || state.zone === currentFilter) {
-            const growth = data['24'] - data['17'];
-            tableBody.innerHTML += `
-                <tr>
-                    <td class="td-bold">${state.name}</td>
-                    <td><span style="color:${zoneColors[state.zone]}">•</span> ${state.zone}</td>
-                    <td>${data['17']}</td>
-                    <td>${data['22']}</td>
-                    <td class="td-bold">${data['24']}</td>
-                    <td class="change-pos">+${growth}</td>
-                </tr>
-            `;
+    const ctxTrend = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+            labels: ['2017', '2022', '2024'],
+            datasets: [{
+                label: 'Total National Staff Strength',
+                data: [total17, total22, total24],
+                borderColor: '#059669',
+                tension: 0.3,
+                fill: true,
+                backgroundColor: 'rgba(5, 150, 105, 0.1)'
+            }]
         }
     });
-
-    // Render Zone Cards
-    Object.keys(zoneAggregates).forEach(z => {
-        if (currentFilter === 'all' || z === currentFilter) {
-            zonesGrid.innerHTML += `
-                <div class="zone-card" style="--zone-color: ${zoneColors[z]}">
-                    <div class="zone-name">${z}</div>
-                    <div class="zone-count">${zoneAggregates[z].c24}</div>
-                    <div style="font-size:11px; color:var(--muted)">Total Staff (2024)</div>
-                </div>
-            `;
-        }
-    });
-}
-
-function filterByZone(zone) {
-    currentFilter = zone;
-    document.querySelectorAll('.zone-btn').forEach(b => {
-        b.classList.toggle('active', b.innerText === zone || (zone === 'all' && b.innerText === 'All Zones'));
-    });
-    renderAll();
 }
 
 function handleSearch() {
     const term = document.getElementById('globalSearch').value.toLowerCase();
     const rows = document.getElementById('mainTableBody').getElementsByTagName('tr');
     for (let row of rows) {
-        const stateName = row.cells[0].innerText.toLowerCase();
-        row.style.display = stateName.includes(term) ? '' : 'none';
+        row.style.display = row.cells[0].innerText.toLowerCase().includes(term) ? '' : 'none';
     }
-}
-
-function renderChart() {
-    const ctx = document.getElementById('historicalChart').getContext('2d');
-    const labels = Object.keys(stateMap).map(k => stateMap[k].name);
-    
-    if(chartInstance) chartInstance.destroy();
-
-    chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [
-                { label: '2017', data: Object.keys(historicalData).map(k => historicalData[k]['17']), backgroundColor: '#cbd5e1' },
-                { label: '2022', data: Object.keys(historicalData).map(k => historicalData[k]['22']), backgroundColor: '#3b82f6' },
-                { label: '2024', data: Object.keys(historicalData).map(k => historicalData[k]['24']), backgroundColor: '#059669' }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'top', labels: { font: { family: 'DM Sans', weight: '500' } } } },
-            scales: {
-                y: { beginAtZero: true, grid: { color: '#f1f3f5' } },
-                x: { grid: { display: false } }
-            }
-        }
-    });
 }
 
 window.onload = init;
