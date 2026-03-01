@@ -114,7 +114,7 @@
     width: calc(100% - var(--sidebar-width));
   }
 
-  /* --- Original Styles (Adjusted for main-content) --- */
+  /* --- Header Styles --- */
   header {
     padding: 60px 60px 40px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -183,6 +183,68 @@
   }
   .section-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
 
+  /* Recruitment Milestone Chart Styles */
+  .milestone-container {
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 40px;
+    margin-bottom: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .milestone-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    align-items: end;
+    height: 300px;
+    margin-top: 20px;
+  }
+  .milestone-bar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .milestone-bar {
+    width: 100%;
+    max-width: 80px;
+    background: linear-gradient(to top, var(--accent), #4ade80);
+    border-radius: 6px 6px 2px 2px;
+    position: relative;
+    transition: height 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+    height: 0;
+    box-shadow: 0 10px 30px -10px rgba(0, 212, 170, 0.4);
+  }
+  .milestone-bar.era-pre { background: linear-gradient(to top, #334155, #64748b); box-shadow: none; opacity: 0.6; }
+  .milestone-val {
+    position: absolute;
+    top: -30px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: #fff;
+  }
+  .milestone-label {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .milestone-label strong {
+    display: block;
+    color: var(--text);
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
   /* Zone cards */
   .zones-grid {
     display: grid;
@@ -238,7 +300,6 @@
     margin-top: 2px;
   }
 
-  /* Bar */
   .zone-bar-track {
     height: 6px;
     background: rgba(255,255,255,0.06);
@@ -255,7 +316,6 @@
   }
   .zone-bar-fill.animated { width: var(--bar-width); }
 
-  /* States mini bars */
   .zone-states { display: flex; flex-direction: column; gap: 6px; }
   .state-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
   .state-code { width: 32px; color: var(--muted); font-weight: 500; font-size: 11px; letter-spacing: 0.5px; }
@@ -314,43 +374,6 @@
   .state-card-bar-fill { height: 100%; border-radius: 2px; background: var(--zone-color); opacity: 0.7; transition: width 1.3s cubic-bezier(0.4,0,0.2,1); width: 0; }
   .state-card-bar-fill.animated { width: var(--state-bar-width); }
 
-  /* Bubble chart */
-  .bubble-section {
-    background: var(--surface);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.06);
-    padding: 30px;
-    margin-bottom: 60px;
-  }
-  .bubble-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 2px;
-    color: #fff;
-    margin-bottom: 24px;
-  }
-  #bubbleCanvas { width: 100%; }
-
-  /* Legend */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-top: 20px;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .legend-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
   footer {
     padding: 30px 60px;
     border-top: 1px solid rgba(255,255,255,0.06);
@@ -361,12 +384,6 @@
     color: var(--muted);
     letter-spacing: 1px;
   }
-
-  @keyframes countUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .zone-count { animation: countUp 0.6s ease forwards; }
 </style>
 </head>
 <body>
@@ -395,12 +412,51 @@
       <h1>NAFDAC Staff<br>Distribution</h1>
       <div class="header-sub">National Agency for Food and Drug Administration & Control — Plot 2032 Olusegun Obasanjo Way, Wuse Zone 7, Abuja</div>
       <div class="total-badge">
-        <strong id="totalCount">—</strong>
+        <strong id="totalCount">2,038</strong>
         <span>Total Staff on Roll</span>
       </div>
     </header>
 
     <div class="main">
+      
+      <div class="section-title">Administration Recruitment Milestones</div>
+      <div class="milestone-container">
+          <div class="milestone-grid">
+              <div class="milestone-bar-wrapper">
+                  <div class="milestone-val">1,679</div>
+                  <div class="milestone-bar era-pre" id="bar1" style="height: 100%;"></div>
+                  <div class="milestone-label">
+                      <strong>Pre-Administration</strong>
+                      Prior to Nov 2017
+                  </div>
+              </div>
+              <div class="milestone-bar-wrapper">
+                  <div class="milestone-val">55</div>
+                  <div class="milestone-bar" id="bar2" style="height: 3.2%;"></div>
+                  <div class="milestone-label">
+                      <strong>Strategic Growth</strong>
+                      2017 — 2021
+                  </div>
+              </div>
+              <div class="milestone-bar-wrapper">
+                  <div class="milestone-val">140</div>
+                  <div class="milestone-bar" id="bar3" style="height: 8.3%;"></div>
+                  <div class="milestone-label">
+                      <strong>2022 Recruitment</strong>
+                      Milestone Cohort
+                  </div>
+              </div>
+              <div class="milestone-bar-wrapper">
+                  <div class="milestone-val">164</div>
+                  <div class="milestone-bar" id="bar4" style="height: 9.7%;"></div>
+                  <div class="milestone-label">
+                      <strong>2024 — Today</strong>
+                      Current Expansion
+                  </div>
+              </div>
+          </div>
+      </div>
+
       <div class="section-title">Geopolitical Zone Breakdown</div>
       <div class="zones-grid" id="zonesGrid"></div>
 
@@ -412,12 +468,6 @@
         <div class="states-body">
           <div class="all-states-grid" id="statesGrid"></div>
         </div>
-      </div>
-
-      <div class="bubble-section">
-        <div class="bubble-title">Visual Proportional Map — Staff Count by State</div>
-        <canvas id="bubbleCanvas"></canvas>
-        <div class="legend" id="legend"></div>
       </div>
     </div>
 
@@ -484,24 +534,13 @@ Object.keys(zoneColors).forEach(zone => {
     zoneNavList.appendChild(btn);
 });
 
-// Legend
-const legend = document.getElementById('legend');
-for (const [zone, color] of Object.entries(zoneColors)) {
-  legend.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div><span>${zone}</span></div>`;
-}
-
 // --- Data Filtering Logic ---
 function filterData(zoneName, element) {
-    // Update Active Nav
     document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
     if(element) element.classList.add('active');
     else document.querySelector('.nav-item').classList.add('active');
-
-    // Update Title
     document.getElementById('statesContainerTitle').textContent = zoneName === 'all' ? 'All States' : zoneName + ' States';
-    
     renderGrid(zoneName);
-    drawBubbles(zoneName);
 }
 
 // --- Render Logic ---
@@ -514,7 +553,6 @@ function renderGrid(filterZone) {
     const maxZone = Math.max(...Object.values(zoneData).map(z=>z.count));
     const maxState = Math.max(...Object.values(stateCounts));
 
-    // Render Zone Cards
     const zonesToRender = filterZone === 'all' ? Object.keys(zoneColors) : [filterZone];
     
     zonesToRender.forEach(zoneName => {
@@ -540,7 +578,7 @@ function renderGrid(filterZone) {
         card.innerHTML = `
             <div class="zone-accent-bg"></div>
             <div class="zone-header">
-                <div class="zone-name">${zoneName.replace(' (','\n(')}</div>
+                <div class="zone-name">${zoneName}</div>
                 <div>
                     <div class="zone-count">${zd.count}</div>
                     <div class="zone-pct">${pct}% of total</div>
@@ -552,7 +590,6 @@ function renderGrid(filterZone) {
         zonesGrid.appendChild(card);
     });
 
-    // Render State Cards
     let statesToRender = [];
     if(filterZone === 'all') {
         statesToRender = Object.entries(stateCounts).sort((a,b)=>b[1]-a[1]);
@@ -564,7 +601,6 @@ function renderGrid(filterZone) {
         const info = stateMap[code];
         const color = zoneColors[info.zone];
         const sw = ((count/maxState)*100).toFixed(1);
-        const zonePct = ((count/zoneData[info.zone].count)*100).toFixed(1);
         
         const card = document.createElement('div');
         card.className = 'state-card';
@@ -574,17 +610,13 @@ function renderGrid(filterZone) {
             <div class="state-card-full">${info.name}</div>
             <div class="state-card-top">
                 <div class="state-card-count">${count}</div>
-                <div style="text-align:right">
-                    <div class="state-card-zone">${info.zone}</div>
-                    <div style="font-size:10px;color:var(--muted);margin-top:2px">${zonePct}% of zone</div>
-                </div>
+                <div class="state-card-zone">${info.zone}</div>
             </div>
             <div class="state-card-bar-track"><div class="state-card-bar-fill" style="--state-bar-width:${sw}%"></div></div>
         `;
         statesGrid.appendChild(card);
     });
 
-    // Animate bars
     setTimeout(() => {
         document.querySelectorAll('.zone-bar-fill, .state-mini-fill, .state-card-bar-fill').forEach(el => el.classList.add('animated'));
     }, 100);
@@ -597,84 +629,13 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
     cards.forEach(card => {
         const name = card.querySelector('.state-card-full').textContent.toLowerCase();
         const code = card.querySelector('.state-card-name').textContent.toLowerCase();
-        if(name.includes(term) || code.includes(term)) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
+        if(name.includes(term) || code.includes(term)) card.style.display = 'block';
+        else card.style.display = 'none';
     });
 });
 
-// --- Bubble Chart ---
-const canvas = document.getElementById('bubbleCanvas');
-function drawBubbles(filterZone) {
-    const W = canvas.parentElement.clientWidth - 60;
-    const H = Math.min(400, W * 0.55);
-    canvas.width = W;
-    canvas.height = H;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, W, H);
-
-    const maxState = Math.max(...Object.values(stateCounts));
-    
-    let bubbleStates = [];
-    if(filterZone === 'all') {
-        bubbleStates = Object.entries(stateCounts);
-    } else {
-        bubbleStates = zoneData[filterZone].states.map(s => [s.code, s.count]);
-    }
-
-    const items = bubbleStates.map(([code, count]) => ({
-        code,
-        count,
-        color: zoneColors[stateMap[code].zone],
-        r: Math.sqrt(count / maxState) * (W < 600 ? 38 : 55),
-    }));
-
-    // Circle packing
-    const padding = 4;
-    let x = 0, y = 0, rowH = 0;
-    for (const item of items) {
-        if (x + item.r * 2 + padding > W) { x = 0; y += rowH + padding; rowH = 0; }
-        item.cx = x + item.r;
-        item.cy = y + item.r;
-        x += item.r * 2 + padding;
-        rowH = Math.max(rowH, item.r * 2);
-    }
-
-    const newH = y + rowH + 10;
-    canvas.height = newH;
-
-    for (const item of items) {
-        const { cx, cy, r, color } = item;
-        const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-        grd.addColorStop(0, color + '40');
-        grd.addColorStop(1, color + '08');
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle = grd;
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.strokeStyle = color + '80';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        if (r > 16) {
-            ctx.fillStyle = '#fff';
-            ctx.font = `bold ${Math.max(8, Math.min(11, r * 0.32))}px DM Sans`;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(item.code, cx, cy - r * 0.15);
-            ctx.font = `${Math.max(7, Math.min(10, r * 0.26))}px DM Sans`;
-            ctx.fillStyle = 'rgba(255,255,255,0.5)';
-            ctx.fillText(item.count, cx, cy + r * 0.22);
-        }
-    }
-}
-
 // Initial Render
 filterData('all');
-window.addEventListener('resize', () => drawBubbles(document.querySelector('.nav-item.active').innerText.replace('\nAll Zones','').trim()));
 
 </script>
 </body>
