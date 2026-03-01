@@ -3,43 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAFDAC Nominal Roll 2026</title>
+    <title>NAFDAC Staff Directory — Verified 2026 Roll</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0a0f1a; --surface: #111827; --accent: #00d4aa;
-            --text: #e2e8f0; --muted: #64748b; --border: rgba(255,255,255,0.08);
+            --bg: #0a0f1a;
+            --surface: #111827;
+            --accent: #00d4aa;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --border: rgba(255,255,255,0.08);
         }
-        body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 300px; background: var(--surface); border-right: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; }
-        .brand { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #fff; margin-bottom: 30px; }
-        .search-box { background: #000; border: 1px solid var(--border); padding: 12px; border-radius: 8px; margin-bottom: 20px; }
-        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; }
-        .main { flex: 1; overflow-y: auto; padding: 40px 60px; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        h1 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; margin: 0; }
-        .table-container { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { text-align: left; padding: 15px 20px; background: rgba(255,255,255,0.02); color: var(--muted); font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
-        td { padding: 12px 20px; border-bottom: 1px solid var(--border); }
-        .rank-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(0, 212, 170, 0.1); color: var(--accent); text-transform: uppercase; font-weight: bold; }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 320px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            color: #fff;
+            letter-spacing: 1px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand span { color: var(--accent); }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            background: #000;
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 212, 170, 0.2);
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .info-panel {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+            background: rgba(255,255,255,0.02);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Main Content Area */
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 50px 60px;
+            background: radial-gradient(circle at top right, rgba(0, 212, 170, 0.05), transparent);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 60px;
+            margin: 0;
+            line-height: 1;
+            color: #fff;
+        }
+
+        .stats-strip {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            min-width: 140px;
+        }
+
+        .stat-val { 
+            font-family: 'Bebas Neue', sans-serif; 
+            font-size: 28px; 
+            color: var(--accent); 
+        }
+
+        .stat-lbl { 
+            font-size: 10px; 
+            color: var(--muted); 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* Table Design */
+        .table-container {
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        th {
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            color: var(--muted);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            color: #cbd5e1;
+        }
+
+        tr:last-child td { border: none; }
+
+        tr:hover td {
+            background: rgba(255,255,255,0.02);
+            color: #fff;
+        }
+
+        .staff-name { font-weight: 700; color: #fff; }
+        .staff-id { color: var(--accent); font-family: monospace; font-size: 15px; }
+        
+        .dept-tag {
+            background: rgba(0, 212, 170, 0.1);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid rgba(0, 212, 170, 0.2);
+        }
+
+        .no-results {
+            padding: 100px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 18px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
     </style>
 </head>
 <body>
 
-<div class="sidebar">
-    <div class="brand">NAFDAC <span style="color:var(--accent)">DB</span></div>
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search Rank, Name or ID..." onkeyup="filterTable()">
+<aside class="sidebar">
+    <div class="brand">NAFDAC<span>.</span>ROLL</div>
+    
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search Name, ID, or Location..." onkeyup="filterTable()">
+        </div>
     </div>
-    <div style="font-size: 12px; color: var(--muted)">
-        <p><b>Dataset:</b> Feb 27, 2026</p>
-        <p><b>Total Staff:</b> 2,030 Records Verified</p>
-    </div>
-</div>
 
-<div class="main">
+    <div class="info-panel">
+        <p><b>Registry Status:</b> Verified</p>
+        <p><b>Total Records:</b> 2,038</p>
+        <p style="margin-top:15px; font-style: italic;">Showing live updates based on February 2026 Nominal Roll data.</p>
+    </div>
+</aside>
+
+<main class="main">
     <header>
-        <h1>Nominal Roll <span style="color:var(--accent)" id="totalCount">0</span></h1>
+        <div>
+            <div style="color: var(--accent); font-weight: 700; margin-bottom: 8px;">ADMINISTRATIVE PORTAL</div>
+            <h1>Staff Directory</h1>
+        </div>
+        <div class="stats-strip">
+            <div class="stat-card">
+                <div class="stat-val" id="totalCount">0</div>
+                <div class="stat-lbl">Matches Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val">Feb 27</div>
+                <div class="stat-lbl">Last Updated</div>
+            </div>
+        </div>
     </header>
 
     <div class="table-container">
@@ -47,44 +244,54 @@
             <thead>
                 <tr>
                     <th>S/N</th>
-                    <th>Name</th>
-                    <th>Rank / Designation</th>
-                    <th>Staff No.</th>
+                    <th>Staff Name</th>
+                    <th>Staff ID</th>
+                    <th>Designation/Rank</th>
                     <th>State</th>
                     <th>Dept</th>
                     <th>Location</th>
                 </tr>
             </thead>
-            <tbody id="staffTable"></tbody>
+            <tbody id="staffTable">
+                </tbody>
         </table>
+        <div id="noResults" class="no-results" style="display:none;">
+            No records found matching your criteria.
+        </div>
     </div>
-</div>
+</main>
 
 <script>
-// VERIFIED RANK DATA MAPPING
+/**
+ * PASTE YOUR DATA HERE
+ * You can paste the entire array of 2,038 objects below.
+ * The script is optimized to handle large arrays efficiently.
+ */
 const staffData = [
-  {"sn": 1, "name": "PROF ADEYEYE CHRISTIANAH MOJI", "rank": "DIRECTOR GENERAL", "id": "SS/2671", "state": "OSU", "dir": "DGO", "loc": "CHQ"},
-  {"sn": 2, "name": "DR MOMODU RAMETU O", "rank": "DIRECTOR", "id": "SS/130", "state": "EDO", "dir": "NCS", "loc": "ISOLO"},
-  {"sn": 3, "name": "MRS EDWARDS EVA OBIAGELI", "rank": "DIRECTOR", "id": "SS/1075", "state": "LAG", "dir": "FS&AN", "loc": "ISOLO"},
-  {"sn": 13, "name": "MR AMUDA KAYODE ISIAKA", "rank": "DIRECTOR", "id": "SS/761", "state": "OYO", "dir": "DER", "loc": "ISOLO"},
-  {"sn": 27, "name": "MR NWAOGU EMMANUEL N", "rank": "DEPUTY DIRECTOR", "id": "SS/605", "state": "IMO", "dir": "HRM", "loc": "ISOLO"},
-  {"sn": 125, "name": "MR ABDULKADIR RASAQ ADEMOLA", "rank": "DEPUTY DIRECTOR", "id": "SS/625", "state": "KWA", "dir": "CORDINATOR", "loc": "AKURE"},
-  {"sn": 2026, "name": "MR OGBAKA DANIEL MARK", "rank": "SENIOR DRIVER/MECH. II", "id": "JS/1384", "state": "CRO", "dir": "HRM", "loc": "CHQ"},
-  {"sn": 2030, "name": "MR ZEKERI MUKTARI", "rank": "MOTOR DRIVER/MECH. II", "id": "JS/1393", "state": "KOG", "dir": "F&A", "loc": "CHQ"}
-  // NOTE: You can now paste the remaining rows here. 
-  // All ranks are now accurately pulled from the "PRESENT APPT." column.
+    {"sn": 1, "name": "PROF ADEYEYE CHRISTIANAH MOJI", "rank": "DIRECTOR GENERAL", "id": "SS/2671", "state": "OSU", "dir": "DGO", "loc": "CHQ"},
+    {"sn": 2, "name": "DR MOMODU RAMETU O", "rank": "DIRECTOR", "id": "SS/130", "state": "EDO", "dir": "NCS", "loc": "ISOLO"},
+    {"sn": 3, "name": "MRS EDWARDS EVA OBIAGELI", "rank": "DIRECTOR", "id": "SS/1075", "state": "LAG", "dir": "FS&AN", "loc": "ISOLO"},
+    {"sn": 4, "name": "MR SHABA MOHAMMED", "rank": "DIRECTOR", "id": "SS/534", "state": "NIG", "dir": "REGULATORY", "loc": "SEZ/ENU"},
+    {"sn": 5, "name": "MRS SONNY-AFOEKELU UCHENNA M", "rank": "DIRECTOR", "id": "SS/781", "state": "ANA", "dir": "D R&R", "loc": "ISOLO"},
+    // ... Add all other records here ...
+    {"sn": 135, "name": "MRS CHUKWUMA RITA NWAKUSO", "rank": "DEPUTY DIRECTOR", "id": "SS/656", "state": "DEL", "dir": "REGULATORY", "loc": "SSZ/PH"}
 ];
 
-function renderTable(data) {
+function initTable() {
+    const tbody = document.getElementById('staffTable');
+    renderRows(staffData);
+}
+
+function renderRows(data) {
     const tbody = document.getElementById('staffTable');
     tbody.innerHTML = data.map(s => `
         <tr>
-            <td style="color:var(--muted)">${s.sn}</td>
-            <td style="font-weight:600; color:#fff">${s.name}</td>
-            <td><span class="rank-tag">${s.rank}</span></td>
-            <td>${s.id}</td>
+            <td style="color: var(--muted)">${s.sn}</td>
+            <td class="staff-name">${s.name}</td>
+            <td class="staff-id">${s.id}</td>
+            <td>${s.rank}</td>
             <td>${s.state}</td>
-            <td>${s.dir}</td>
+            <td><span class="dept-tag">${s.dir}</span></td>
             <td>${s.loc}</td>
         </tr>
     `).join('');
@@ -95,13 +302,20 @@ function filterTable() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const filtered = staffData.filter(s => 
         s.name.toLowerCase().includes(query) || 
-        s.rank.toLowerCase().includes(query) || 
-        s.id.toLowerCase().includes(query)
+        s.id.toLowerCase().includes(query) || 
+        s.loc.toLowerCase().includes(query) ||
+        s.state.toLowerCase().includes(query)
     );
-    renderTable(filtered);
+
+    renderRows(filtered);
+
+    const noResults = document.getElementById('noResults');
+    noResults.style.display = filtered.length === 0 ? "block" : "none";
 }
 
-renderTable(staffData);
+// Initialize on Load
+window.onload = initTable;
 </script>
+
 </body>
 </html>
