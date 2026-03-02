@@ -472,14 +472,22 @@
     codes.forEach(c=>{
       const d = comparisonData[c];
       chart.innerHTML += `
-        <div class="state-group">
-          <div class="bars-cluster">
-            <div class="bar-v bar-2017" style="height:${(d['2017']/160*100)}%"></div>
-            <div class="bar-v bar-2022" style="height:${(d['2022']/160*100)}%"></div>
-            <div class="bar-v bar-2026" style="height:${(d['2026']/160*100)}%"></div>
-          </div>
-          <div class="state-label">${c}</div>
-        </div>`;
+  <div class="state-group">
+    <div class="bars-cluster">
+      <div class="bar-v bar-2017"
+           data-year="2017" data-value="${d['2017']}" data-label="${stateMap[c].name}"
+           style="height:${(d['2017']/160*100)}%"></div>
+
+      <div class="bar-v bar-2022"
+           data-year="2022" data-value="${d['2022']}" data-label="${stateMap[c].name}"
+           style="height:${(d['2022']/160*100)}%"></div>
+
+      <div class="bar-v bar-2026"
+           data-year="2026" data-value="${d['2026']}" data-label="${stateMap[c].name}"
+           style="height:${(d['2026']/160*100)}%"></div>
+    </div>
+    <div class="state-label">${c}</div>
+  </div>`;
       table.innerHTML += `
   <tr>
     <td>${stateMap[c].name}</td>
@@ -548,9 +556,17 @@
       container.insertAdjacentHTML('beforeend',`
         <div class="state-group">
           <div class="bars-cluster">
-            <div class="bar-v bar-2017" style="height:${h2017}%"></div>
-            <div class="bar-v bar-2022" style="height:${h2022}%"></div>
-            <div class="bar-v bar-2026" style="height:${h2026}%"></div>
+            <div class="bar-v bar-2017"
+     data-year="2017" data-value="${d['2017']}" data-label="${z}"
+     style="height:${h2017}%"></div>
+
+<div class="bar-v bar-2022"
+     data-year="2022" data-value="${d['2022']}" data-label="${z}"
+     style="height:${h2022}%"></div>
+
+<div class="bar-v bar-2026"
+     data-year="2026" data-value="${d['2026']}" data-label="${z}"
+     style="height:${h2026}%"></div>
           </div>
           <div class="state-label">${z}</div>
         </div>`);
