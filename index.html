@@ -252,7 +252,7 @@
       <div class="table-container">
         <table>
           <thead>
-            <tr><th>State of Origin</th><th>2017 Roll</th><th>2022 Roll</th><th>2026 Roll</th></tr>
+              <tr><th>State of Origin</th><th>2017 Roll</th><th>2022 Roll</th><th>2026 Roll</th></tr>
           </thead>
           <tbody id="dataTableBody"></tbody>
         </table>
@@ -457,15 +457,13 @@
           </div>
           <div class="state-label">${c}</div>
         </div>`;
-      const diff = d['2026'] - d['2017'];
       table.innerHTML += `
-        <tr>
-          <td>${stateMap[c].name}</td>
-          <td>${d['2017']}</td>
-          <td>${d['2022']}</td>
-          <td class="td-bold">${d['2026']}</td>
-          <td class="${diff>=0?'trend-up':'trend-down'}">${diff>=0?'+':''}${((diff/d['2017'])*100).toFixed(1)}%</td>
-        </tr>`;
+  <tr>
+    <td>${stateMap[c].name}</td>
+    <td>${d['2017']}</td>
+    <td>${d['2022']}</td>
+    <td class="td-bold">${d['2026']}</td>
+  </tr>`;
     });
 
     renderZones(filter);
