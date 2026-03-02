@@ -39,12 +39,12 @@
     --bg:#0b1210;
     --text:#e5f2ec;
 
-    --brand:#013220;          /* keep brand green */
+    --brand:#013220;
     --brand-600:#0b3a2a;
     --brand-300:#2d6b56;
-    --brand-50:#0f1a16;       /* faint tint for badges */
+    --brand-50:#0f1a16;
 
-    --accent:#13c299;         /* a touch brighter on dark */
+    --accent:#13c299;
     --accent-red:#ef5350;
     --accent-red-600:#e53935;
     --accent-amber:#fbbf24;
@@ -221,48 +221,24 @@
 
   /* ---- Hover tooltip for bars ---- */
   .hover-tip {
-    position: fixed;             /* follows cursor */
-    z-index: 2000;
-    pointer-events: none;        /* does not block mouse */
-    background: #0b1f17;         /* deep green/black */
-    color: #fff;
-    font-size: 12px;
-    line-height: 1;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(255,255,255,.12);
-    box-shadow: 0 4px 18px rgba(0,0,0,.25);
-    transform: translate(-50%, calc(-100% - 12px)); /* sit above cursor */
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity .12s ease-in-out;
+    position: fixed; z-index: 2000; pointer-events: none;
+    background: #0b1f17; color: #fff; font-size: 12px; line-height: 1;
+    padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 4px 18px rgba(0,0,0,.25); transform: translate(-50%, calc(-100% - 12px));
+    white-space: nowrap; opacity: 0; transition: opacity .12s ease-in-out;
   }
-  .hover-tip .muted {
-    color: #cbd5e1;              /* slate-300 */
-    margin-right: 8px;
-    letter-spacing: .3px;
-  }
+  .hover-tip .muted { color: #cbd5e1; margin-right: 8px; letter-spacing: .3px; }
   .bars-cluster .bar-v { cursor: crosshair; }
 
   /* === numeric labels above each bar === */
-  .bars-cluster { overflow: visible; }           /* allow labels above bars */
+  .bars-cluster { overflow: visible; }
   .bar-v { position: relative; }
   .bar-v .bar-label {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 6px);                    /* just above bar top */
-    transform: translateX(-50%);
-    font-size: 11px;
-    line-height: 1;
-    color: var(--text);
-    font-weight: 700;
-    white-space: nowrap;
-    text-shadow: 0 1px 0 rgba(255,255,255,.65);
-    pointer-events: none;
+    position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%);
+    font-size: 11px; line-height: 1; color: var(--text); font-weight: 700; white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(255,255,255,.65); pointer-events: none;
   }
-  html[data-theme="dark"] .bar-v .bar-label{
-    text-shadow: 0 1px 0 rgba(0,0,0,.6);
-  }
+  html[data-theme="dark"] .bar-v .bar-label{ text-shadow: 0 1px 0 rgba(0,0,0,.6); }
 
   /* === Make Zonal bars wider and spaced to avoid label overlap === */
   #zonalCompContainer .bar-v { width: 22px; }
@@ -270,16 +246,9 @@
 
   /* === Print buttons (NAFDAC style) === */
   .print-btn{
-    margin-top: 16px;
-    padding: 10px 18px;
-    border-radius: 6px;
-    background: var(--brand);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    font-family: 'Bebas Neue', Impact, system-ui;
-    letter-spacing: 1px;
-    font-size: 14px;
+    margin-top: 16px; padding: 10px 18px; border-radius: 6px;
+    background: var(--brand); color: #fff; border: none; cursor: pointer;
+    font-family: 'Bebas Neue', Impact, system-ui; letter-spacing: 1px; font-size: 14px;
   }
   .print-btn:hover{ background: var(--brand-600); }
   </style>
@@ -372,7 +341,7 @@
         </div>
       </div>
 
-      <!-- Print only the STATE section (+ header) -->
+      <!-- Print only the STATE section (+ header) using Mini-Cards Grid -->
       <button class="print-btn" onclick="printStateReport()">Print Report</button>
 
       <!-- Print ZONE BUNDLE (visible when a zone is selected) -->
@@ -794,21 +763,118 @@
     }
   }
 
+  // Build Mini-Cards Grid HTML (13 / 12 / 12) for states — Option A
+  function buildStateMiniCardsHTML(filter='all'){
+    // Compute codes in selected filter (zone or all)
+    let codes = Object.keys(comparisonData);
+    if (filter !== 'all') codes = codes.filter(c => stateMap[c].zone === filter);
+    // Sort by full state name
+    codes.sort((a,b) => stateMap[a].name.localeCompare(stateMap[b].name));
+
+    // Determine scaling (keep same reference max 160 as screen chart to preserve proportions)
+    const MAX_REF = 160;
+
+    // Split into rows: 13 / 12 / rest
+    const row1 = codes.slice(0, 13);
+    const row2 = codes.slice(13, 25);
+    const row3 = codes.slice(25);
+
+    const renderRow = (row) => {
+      const cols = row.length;
+      const cards = row.map(code=>{
+        const nm = stateMap[code].name;
+        const d = comparisonData[code];
+        const h2017 = (d['2017']/MAX_REF)*100;
+        const h2022 = (d['2022']/MAX_REF)*100;
+        const h2026 = (d['2026']/MAX_REF)*100;
+
+        return `
+          <div class="mini-card">
+            <div class="mini-title">${nm} <span class="mini-code">(${code})</span></div>
+            <div class="mini-bars">
+              <div class="mini-bar y2017" style="height:${h2017}%;" title="2017: ${d['2017']}"></div>
+              <div class="mini-bar y2022" style="height:${h2022}%;" title="2022: ${d['2022']}"></div>
+              <div class="mini-bar y2026" style="height:${h2026}%;" title="2026: ${d['2026']}"></div>
+            </div>
+            <div class="mini-values">
+              <span>${d['2017']}</span>
+              <span>${d['2022']}</span>
+              <span class="em">${d['2026']}</span>
+            </div>
+          </div>`;
+      }).join('');
+
+      return `<div class="mini-row" style="grid-template-columns: repeat(${cols}, minmax(0, 1fr));">${cards}</div>`;
+    };
+
+    return `
+      <section class="print-state-grid">
+        <div class="grid-title">State Staff Distribution — Mini Report</div>
+        <div class="grid-legend">
+          <span class="k y2017"></span> 2017 &nbsp;&nbsp;
+          <span class="k y2022"></span> 2022 &nbsp;&nbsp;
+          <span class="k y2026"></span> 2026
+        </div>
+        <div class="rows">
+          ${renderRow(row1)}
+          ${renderRow(row2)}
+          ${renderRow(row3)}
+        </div>
+      </section>
+    `;
+  }
+
   // Open a dedicated print window with copied styles + header watermark intact
-  function printByIds(ids, title = 'Report'){
+  function openPrintWindow(htmlBody, title='Report'){
     const win = window.open('', '_blank');
     const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
       .map(el => el.outerHTML).join('\n');
-
     const theme = document.documentElement.getAttribute('data-theme') || 'light';
-
-    let bodyHtml = '';
-    ids.forEach(id=>{
-      const el = document.getElementById(id);
-      if(el) bodyHtml += el.outerHTML + '\n';
-    });
-
     const headerCover = document.getElementById('pageHeader')?.outerHTML || '';
+
+    const extraCSS = `
+      @page { margin: 16mm; }
+      body { background: var(--bg); color: var(--text); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .comp-scroll-wrapper, .comp-flex-container, .bars-cluster { overflow: visible !important; }
+
+      /* Mini-cards grid */
+      .print-state-grid { padding: 16px 24px; }
+      .print-state-grid .grid-title {
+        font-family:'Bebas Neue',Impact,system-ui; letter-spacing:1px; font-size:20px; margin: 8px 0 2px;
+      }
+      .print-state-grid .grid-legend { font-size:12px; color: var(--muted); margin-bottom: 12px; display:flex; align-items:center; gap:8px; }
+      .print-state-grid .grid-legend .k { display:inline-block; width:14px; height:10px; border-radius:2px; vertical-align:middle; }
+      .print-state-grid .grid-legend .y2017 { background:#334155; opacity:.75; }
+      .print-state-grid .grid-legend .y2022 { background:#3b82f6; opacity:.9; }
+      .print-state-grid .grid-legend .y2026 { background:var(--accent); }
+
+      .print-state-grid .rows { display:flex; flex-direction:column; gap:14px; }
+      .print-state-grid .mini-row {
+        display:grid; gap:10px; align-items:end;
+      }
+
+      .print-state-grid .mini-card {
+        background: var(--surface); border:1px solid var(--border); border-radius:8px;
+        padding:10px; min-width:0;
+      }
+      .print-state-grid .mini-title {
+        font-size:11px; color:var(--muted); margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      }
+      .print-state-grid .mini-title .mini-code { color:#94a3b8; }
+      .print-state-grid .mini-bars {
+        height:80px; display:flex; align-items:flex-end; justify-content:center; gap:6px; margin-bottom:6px;
+      }
+      .print-state-grid .mini-bar { width:8px; border-radius:2px 2px 0 0; }
+      .print-state-grid .mini-bar.y2017 { background:#334155; opacity:.75; }
+      .print-state-grid .mini-bar.y2022 { background:#3b82f6; opacity:.9; }
+      .print-state-grid .mini-bar.y2026 { background:var(--accent); }
+
+      .print-state-grid .mini-values { display:flex; justify-content:center; gap:10px; font-size:11px; }
+      .print-state-grid .mini-values .em { font-weight:700; color:var(--text); }
+
+      header{ position: relative; }
+      /* Keep the big 'NAFDAC' watermark from your header::after (already in the base CSS) */
+    `;
 
     const html = `
       <html lang="en" data-theme="${theme}">
@@ -816,21 +882,11 @@
           <meta charset="utf-8">
           <title>${title}</title>
           ${styles}
-          <style>
-            @page { margin: 16mm; }
-            body { background: var(--bg); color: var(--text); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .comp-scroll-wrapper { overflow: visible !important; }
-            .comp-flex-container { min-width: auto !important; }
-            .bars-cluster { overflow: visible !important; }
-            header { position: relative; }
-            header::after { /* keep watermark big NAFDAC on print as well */ }
-          </style>
+          <style>${extraCSS}</style>
         </head>
         <body data-theme="${theme}">
           ${headerCover}
-          <main style="padding: 16px 24px 32px;">
-            ${bodyHtml}
-          </main>
+          <main>${htmlBody}</main>
         </body>
       </html>`;
 
@@ -843,21 +899,44 @@
 
   // Public print actions
   function printZonalReport(){
-    printByIds(['zonalSection'], 'Zonal Staff Distribution Comparison');
+    // Print header + just the zonal card section
+    const zonal = document.getElementById('zonalSection')?.outerHTML || '';
+    openPrintWindow(zonal, 'Zonal Staff Distribution Comparison');
   }
+
   function printStateReport(){
-    printByIds(['stateCompTitle','stateCompChart'], 'State Staff Distribution Comparison');
+    // Print header + mini-cards grid for all states or current zone
+    const grid = buildStateMiniCardsHTML(currentFilter);
+    openPrintWindow(grid, 'State Staff Distribution — Mini Report');
   }
+
   function printCurrentZoneBundle(){
     if(!currentFilter || currentFilter==='all'){
       alert('Please select a zone from the left to print its report.');
       return;
     }
-    // Full zone profile bundle
-    printByIds(
-      ['zonalSection','stateCompTitle','stateCompChart','zonesTitle','zonesGrid','tableSection','statesMetricsTitle','statesGrid'],
-      `${currentFilter} — Geopolitical Zone Report`
-    );
+    // Compose full bundle for the selected zone: zonal card + mini-card state grid + zone cards + table + metrics
+    const zonal = document.getElementById('zonalSection')?.outerHTML || '';
+    const gridTitle = document.getElementById('stateCompTitle')?.outerHTML || '';
+    const zoneCardsTitle = document.getElementById('zonesTitle')?.outerHTML || '';
+    const zonesGrid = document.getElementById('zonesGrid')?.outerHTML || '';
+    const table = document.getElementById('tableSection')?.outerHTML || '';
+    const metricsTitle = document.getElementById('statesMetricsTitle')?.outerHTML || '';
+    const statesGrid = document.getElementById('statesGrid')?.outerHTML || '';
+
+    const miniCards = buildStateMiniCardsHTML(currentFilter);
+
+    const bundle = `
+      ${zonal}
+      ${gridTitle}
+      ${miniCards}
+      ${zoneCardsTitle}
+      ${zonesGrid}
+      ${table}
+      ${metricsTitle}
+      ${statesGrid}
+    `;
+    openPrintWindow(bundle, `${currentFilter} — Geopolitical Zone Report`);
   }
 
   // Hard refresh to return to initial dashboard state
