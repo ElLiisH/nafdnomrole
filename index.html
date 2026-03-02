@@ -267,6 +267,21 @@
   /* === Make Zonal bars wider and spaced to avoid label overlap === */
   #zonalCompContainer .bar-v { width: 22px; }
   #zonalCompContainer .bars-cluster { gap: 8px; }
+
+  /* === Print buttons (NAFDAC style) === */
+  .print-btn{
+    margin-top: 16px;
+    padding: 10px 18px;
+    border-radius: 6px;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-family: 'Bebas Neue', Impact, system-ui;
+    letter-spacing: 1px;
+    font-size: 14px;
+  }
+  .print-btn:hover{ background: var(--brand-600); }
   </style>
 </head>
 <body>
@@ -291,7 +306,8 @@
 
     <div class="nav-group">
       <div class="nav-title">Geopolitical Zones</div>
-      <button class="nav-item active" id="navDashboard" onclick="switchView('dashboard')">
+      <!-- Dashboard Overview now hard-refreshes the page -->
+      <button class="nav-item active" id="navDashboard" onclick="returnToHome()">
         <div class="nav-dot" style="background:#fff"></div> Dashboard Overview
       </button>
       <div id="zoneNavList"></div>
@@ -306,7 +322,7 @@
 
   <!-- Main -->
   <div class="main-content">
-    <header>
+    <header id="pageHeader">
       <div class="header-label" id="liveDateLabel">Official Nominal Roll Analysis · Feb 2026</div>
       <h1 id="mainTitle">NAFDAC Staff<br>Distribution</h1>
       <div class="header-sub">National Agency for Food and Drug Administration & Control — Integrated Analysis System</div>
@@ -320,9 +336,9 @@
     <div class="main" id="dashboardView">
 
       <!-- Zonal Comparison Section (DOM bars) -->
-      <section class="card">
+      <section class="card" id="zonalSection">
         <div class="card-header">
-          <h3>Zonal Staff Strength Comparison</h3>
+          <h3>Zonal Staff Distribution Comparison</h3>
         </div>
         <div class="card-body">
           <div class="comp-legend" style="margin-bottom: 20px;">
@@ -333,16 +349,19 @@
           <div class="comp-scroll-wrapper">
             <div class="comp-flex-container" id="zonalCompContainer"></div>
           </div>
+
+          <!-- Print only the ZONAL section (+ header) -->
+          <button class="print-btn" onclick="printZonalReport()">Print Report</button>
         </div>
       </section>
 
       <!-- Zone cards -->
-      <div class="section-title">Geopolitical Zone Distribution</div>
+      <div class="section-title" id="zonesTitle">Geopolitical Zone Distribution</div>
       <div class="zones-grid" id="zonesGrid"></div>
 
       <!-- State comparative section -->
-      <div class="section-title">Comparative Growth by State</div>
-      <div class="comp-chart-section">
+      <div class="section-title" id="stateCompTitle">State Staff Distribution Comparison</div>
+      <div class="comp-chart-section" id="stateCompChart">
         <div class="comp-legend">
           <div class="legend-item"><div class="legend-box bar-2017"></div> 2017 Roll</div>
           <div class="legend-item"><div class="legend-box bar-2022"></div> 2022 Roll</div>
@@ -353,8 +372,16 @@
         </div>
       </div>
 
+      <!-- Print only the STATE section (+ header) -->
+      <button class="print-btn" onclick="printStateReport()">Print Report</button>
+
+      <!-- Print ZONE BUNDLE (visible when a zone is selected) -->
+      <button class="print-btn" id="printZoneBundleBtn" style="display:none" onclick="printCurrentZoneBundle()">
+        Print Zone Report
+      </button>
+
       <!-- Table -->
-      <div class="table-container">
+      <div class="table-container" id="tableSection">
         <table>
           <thead>
               <tr><th>State of Origin</th><th>2017 Roll</th><th>2022 Roll</th><th>2026 Roll</th></tr>
@@ -364,7 +391,7 @@
       </div>
 
       <!-- State metrics -->
-      <div class="section-title">Individual State Metrics</div>
+      <div class="section-title" id="statesMetricsTitle">Individual State Metrics</div>
       <div class="all-states-grid" id="statesGrid"></div>
     </div>
 
@@ -480,6 +507,7 @@
      RENDERING
      ========================= */
   let currentPage=1; const perPage=50; let filteredStaff=realStaffData;
+  let currentFilter='all'; // <- track current zone filter
 
   function switchView(view){
     const isStaff=view==='staff';
@@ -718,8 +746,10 @@
   /* Filter handler */
   function filterData(zone, el){
     if(el){ document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); el.classList.add('active'); }
+    currentFilter = zone || 'all';
     renderDashboardCharts(zone);   // states + table + cards
     renderZonalComparison(zone);   // zonal bars
+    updateZoneBundlePrintButton();
   }
 
   /* ===== Real Dark Mode toggle (Option A) ===== */
@@ -751,12 +781,97 @@
     localStorage.setItem(THEME_KEY, next);
   });
 
+  /* ===== Printing helpers ===== */
+
+  function updateZoneBundlePrintButton(){
+    const btn = document.getElementById('printZoneBundleBtn');
+    if(!btn) return;
+    if(currentFilter && currentFilter !== 'all'){
+      btn.style.display='';
+      btn.textContent = `Print ${currentFilter} Report`;
+    }else{
+      btn.style.display='none';
+    }
+  }
+
+  // Open a dedicated print window with copied styles + header watermark intact
+  function printByIds(ids, title = 'Report'){
+    const win = window.open('', '_blank');
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map(el => el.outerHTML).join('\n');
+
+    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+
+    let bodyHtml = '';
+    ids.forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) bodyHtml += el.outerHTML + '\n';
+    });
+
+    const headerCover = document.getElementById('pageHeader')?.outerHTML || '';
+
+    const html = `
+      <html lang="en" data-theme="${theme}">
+        <head>
+          <meta charset="utf-8">
+          <title>${title}</title>
+          ${styles}
+          <style>
+            @page { margin: 16mm; }
+            body { background: var(--bg); color: var(--text); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .comp-scroll-wrapper { overflow: visible !important; }
+            .comp-flex-container { min-width: auto !important; }
+            .bars-cluster { overflow: visible !important; }
+            header { position: relative; }
+            header::after { /* keep watermark big NAFDAC on print as well */ }
+          </style>
+        </head>
+        <body data-theme="${theme}">
+          ${headerCover}
+          <main style="padding: 16px 24px 32px;">
+            ${bodyHtml}
+          </main>
+        </body>
+      </html>`;
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    setTimeout(()=>{ win.print(); win.close(); }, 200);
+  }
+
+  // Public print actions
+  function printZonalReport(){
+    printByIds(['zonalSection'], 'Zonal Staff Distribution Comparison');
+  }
+  function printStateReport(){
+    printByIds(['stateCompTitle','stateCompChart'], 'State Staff Distribution Comparison');
+  }
+  function printCurrentZoneBundle(){
+    if(!currentFilter || currentFilter==='all'){
+      alert('Please select a zone from the left to print its report.');
+      return;
+    }
+    // Full zone profile bundle
+    printByIds(
+      ['zonalSection','stateCompTitle','stateCompChart','zonesTitle','zonesGrid','tableSection','statesMetricsTitle','statesGrid'],
+      `${currentFilter} — Geopolitical Zone Report`
+    );
+  }
+
+  // Hard refresh to return to initial dashboard state
+  function returnToHome(){
+    location.reload();
+  }
+
   /* Init */
   function init(){
     initTheme();
     updateLiveDates();
     filterData('all');             // render state + zones + zonal bars
     renderZonalComparison('all');  // safe extra call for first paint
+    updateZoneBundlePrintButton(); // hide bundle button initially
   }
   init();
   </script>
