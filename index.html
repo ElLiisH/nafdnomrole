@@ -173,6 +173,29 @@
 
   footer{padding:40px 60px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
   a{color:var(--text);text-decoration:underline} a:hover{color:var(--brand)}
+    /* ---- Hover tooltip for bars ---- */
+.hover-tip {
+  position: fixed;             /* stays under cursor */
+  z-index: 2000;
+  pointer-events: none;        /* never blocks mouse */
+  background: #0b1f17;         /* deep green/black */
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 4px 18px rgba(0,0,0,.25);
+  transform: translate(-50%, calc(-100% - 12px)); /* sit above cursor */
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .12s ease-in-out;
+}
+.hover-tip .muted {
+  color: #cbd5e1;              /* slate-300 */
+  margin-right: 8px;
+  letter-spacing: .3px;
+}
   </style>
 </head>
 <body>
