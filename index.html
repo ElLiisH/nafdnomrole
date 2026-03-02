@@ -6,7 +6,8 @@
   <title>NAFDAC Staff Distribution — Live Nominal Roll 2026</title>
 
   <!-- Correct Google Fonts link (DM Sans + Bebas Neue) -->
-  
+  <!-- (Optional) https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;500;700&display=swap -->
+
   <style>
   /* =========================
      NAFDAC-themed UI (white base, brand-green sidebar, red accents)
@@ -173,29 +174,31 @@
 
   footer{padding:40px 60px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
   a{color:var(--text);text-decoration:underline} a:hover{color:var(--brand)}
-    /* ---- Hover tooltip for bars ---- */
-.hover-tip {
-  position: fixed;             /* stays under cursor */
-  z-index: 2000;
-  pointer-events: none;        /* never blocks mouse */
-  background: #0b1f17;         /* deep green/black */
-  color: #fff;
-  font-size: 12px;
-  line-height: 1;
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,.12);
-  box-shadow: 0 4px 18px rgba(0,0,0,.25);
-  transform: translate(-50%, calc(-100% - 12px)); /* sit above cursor */
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity .12s ease-in-out;
-}
-.hover-tip .muted {
-  color: #cbd5e1;              /* slate-300 */
-  margin-right: 8px;
-  letter-spacing: .3px;
-}
+
+  /* ---- Hover tooltip for bars (added) ---- */
+  .hover-tip {
+    position: fixed;             /* follows cursor */
+    z-index: 2000;
+    pointer-events: none;        /* does not block mouse */
+    background: #0b1f17;         /* deep green/black */
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 4px 18px rgba(0,0,0,.25);
+    transform: translate(-50%, calc(-100% - 12px)); /* sit above cursor */
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity .12s ease-in-out;
+  }
+  .hover-tip .muted {
+    color: #cbd5e1;              /* slate-300 */
+    margin-right: 8px;
+    letter-spacing: .3px;
+  }
+  .bars-cluster .bar-v { cursor: crosshair; }
   </style>
 </head>
 <body>
@@ -254,6 +257,7 @@
           </div>
         </div>
       </section>
+
       <!-- Zone cards -->
       <div class="section-title">Geopolitical Zone Distribution</div>
       <div class="zones-grid" id="zonesGrid"></div>
@@ -460,6 +464,24 @@
     document.getElementById('liveDateLabel').innerText = `Official Nominal Roll Analysis · ${formatted}`;
   }
 
+  /* ========= Tooltip (shared) ========= */
+  // Create one tooltip node for the whole page
+  const tip = document.createElement('div');
+  tip.className = 'hover-tip';
+  document.body.appendChild(tip);
+
+  function showTip(e, label, value, subLabel=''){
+    const html = `
+      ${subLabel ? `<span class="muted">${subLabel}</span>` : ''}
+      <strong>${value}</strong> <span class="muted">${label}</span>
+    `;
+    tip.innerHTML = html;
+    tip.style.left = `${e.clientX}px`;
+    tip.style.top  = `${e.clientY}px`;
+    tip.style.opacity = '1';
+  }
+  function hideTip(){ tip.style.opacity = '0'; }
+
   function renderDashboardCharts(filter){
     const chart=document.getElementById('compChartContainer');
     const table=document.getElementById('dataTableBody');
@@ -469,33 +491,44 @@
     if (filter !== 'all') codes = codes.filter(c => stateMap[c].zone === filter);
     codes.sort((a,b) => stateMap[a].name.localeCompare(stateMap[b].name));
 
+    // Build bars with data attributes for tooltip
     codes.forEach(c=>{
       const d = comparisonData[c];
       chart.innerHTML += `
-  <div class="state-group">
-    <div class="bars-cluster">
-      <div class="bar-v bar-2017"
-           data-year="2017" data-value="${d['2017']}" data-label="${stateMap[c].name}"
-           style="height:${(d['2017']/160*100)}%"></div>
+        <div class="state-group">
+          <div class="bars-cluster">
+            <div class="bar-v bar-2017"
+                 data-year="2017" data-value="${d['2017']}" data-label="${stateMap[c].name}"
+                 style="height:${(d['2017']/160*100)}%"></div>
+            <div class="bar-v bar-2022"
+                 data-year="2022" data-value="${d['2022']}" data-label="${stateMap[c].name}"
+                 style="height:${(d['2022']/160*100)}%"></div>
+            <div class="bar-v bar-2026"
+                 data-year="2026" data-value="${d['2026']}" data-label="${stateMap[c].name}"
+                 style="height:${(d['2026']/160*100)}%"></div>
+          </div>
+          <div class="state-label">${c}</div>
+        </div>`;
 
-      <div class="bar-v bar-2022"
-           data-year="2022" data-value="${d['2022']}" data-label="${stateMap[c].name}"
-           style="height:${(d['2022']/160*100)}%"></div>
-
-      <div class="bar-v bar-2026"
-           data-year="2026" data-value="${d['2026']}" data-label="${stateMap[c].name}"
-           style="height:${(d['2026']/160*100)}%"></div>
-    </div>
-    <div class="state-label">${c}</div>
-  </div>`;
       table.innerHTML += `
-  <tr>
-    <td>${stateMap[c].name}</td>
-    <td>${d['2017']}</td>
-    <td>${d['2022']}</td>
-    <td class="td-bold">${d['2026']}</td>
-  </tr>`;
+        <tr>
+          <td>${stateMap[c].name}</td>
+          <td>${d['2017']}</td>
+          <td>${d['2022']}</td>
+          <td class="td-bold">${d['2026']}</td>
+        </tr>`;
     });
+
+    // Delegated hover for the state chart
+    chart.onmousemove = (e) => {
+      const bar = e.target.closest('.bar-v');
+      if (!bar || !chart.contains(bar)) { hideTip(); return; }
+      const year  = bar.getAttribute('data-year');
+      const value = bar.getAttribute('data-value');
+      const label = bar.getAttribute('data-label'); // full state name
+      showTip(e, year, value, label);
+    };
+    chart.onmouseleave = hideTip;
 
     renderZones(filter);
   }
@@ -557,20 +590,29 @@
         <div class="state-group">
           <div class="bars-cluster">
             <div class="bar-v bar-2017"
-     data-year="2017" data-value="${d['2017']}" data-label="${z}"
-     style="height:${h2017}%"></div>
-
-<div class="bar-v bar-2022"
-     data-year="2022" data-value="${d['2022']}" data-label="${z}"
-     style="height:${h2022}%"></div>
-
-<div class="bar-v bar-2026"
-     data-year="2026" data-value="${d['2026']}" data-label="${z}"
-     style="height:${h2026}%"></div>
+                 data-year="2017" data-value="${d["2017"]}" data-label="${z}"
+                 style="height:${h2017}%"></div>
+            <div class="bar-v bar-2022"
+                 data-year="2022" data-value="${d["2022"]}" data-label="${z}"
+                 style="height:${h2022}%"></div>
+            <div class="bar-v bar-2026"
+                 data-year="2026" data-value="${d["2026"]}" data-label="${z}"
+                 style="height:${h2026}%"></div>
           </div>
           <div class="state-label">${z}</div>
         </div>`);
     });
+
+    // Delegated hover for the zonal chart
+    container.onmousemove = (e) => {
+      const bar = e.target.closest('.bar-v');
+      if (!bar || !container.contains(bar)) { hideTip(); return; }
+      const year  = bar.getAttribute('data-year');
+      const value = bar.getAttribute('data-value');
+      const label = bar.getAttribute('data-label'); // Zone name
+      showTip(e, year, value, label);
+    };
+    container.onmouseleave = hideTip;
   }
 
   /* Zone nav buttons */
