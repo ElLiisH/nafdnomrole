@@ -425,7 +425,14 @@
     .theme-toggle,
     .section-actions { display:none !important; }
   }
-  </style>
+  
+/* Enhancements */
+html[data-theme='dark'] .zone-count{color:var(--on-brand)!important;}
+*{transition:color .25s ease,background-color .25s ease,border-color .25s ease;}
+html[data-theme='dark'] .mini-card{background:var(--surface-2);border-color:var(--border-strong);}
+html[data-theme='dark'] .mini-values .v{color:var(--on-brand);}
+
+</style>
 </head>
 <body>
 
@@ -1118,7 +1125,14 @@
           <meta charset="utf-8">
           <title>${title}</title>
           ${styles}
-          <style>${extraCSS}</style>
+          <style>${extraCSS}
+/* Enhancements */
+html[data-theme='dark'] .zone-count{color:var(--on-brand)!important;}
+*{transition:color .25s ease,background-color .25s ease,border-color .25s ease;}
+html[data-theme='dark'] .mini-card{background:var(--surface-2);border-color:var(--border-strong);}
+html[data-theme='dark'] .mini-values .v{color:var(--on-brand);}
+
+</style>
         </head>
         <body data-theme="${theme}">
           ${headerCover}
