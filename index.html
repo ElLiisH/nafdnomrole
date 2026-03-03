@@ -731,64 +731,51 @@
     }
   }
 
-  // Build Mini-Cards Grid HTML (5 rows for wider bars in print)
+  // Build Mini-Cards Grid HTML — A2-II (uniform columns; auto-shrink when < 6)
   function buildStateMiniCardsHTML(filter='all'){
-    // Compute codes in selected filter (zone or all)
     let codes = Object.keys(comparisonData);
     if (filter !== 'all') codes = codes.filter(c => stateMap[c].zone === filter);
-
-    // Sort by full state name
     codes.sort((a,b) => stateMap[a].name.localeCompare(stateMap[b].name));
 
-    // Determine scaling (keep same reference max 160 as screen chart to preserve proportions)
     const MAX_REF = 160;
 
-    // Split into 5 rows (near-equal distribution)
-    const rowsCount = 5;
-    const perRow = Math.ceil(codes.length / rowsCount);
-    const rows = [];
-    for (let r = 0; r < rowsCount; r++) {
-      rows.push(codes.slice(r * perRow, (r + 1) * perRow));
-    }
+    // Use 6 columns normally; if fewer states, shrink to that count
+    const cols = Math.max(1, Math.min(6, codes.length));
 
-    const renderRow = (row) => {
-      const cols = row.length || 1;
-      const cards = row.map(code=>{
-        const nm = stateMap[code].name;
-        const d = comparisonData[code];
-        const h2017 = (d['2017']/MAX_REF)*100;
-        const h2022 = (d['2022']/MAX_REF)*100;
-        const h2026 = (d['2026']/MAX_REF)*100;
+    const cards = codes.map(code=>{
+      const nm = stateMap[code].name;
+      const d = comparisonData[code];
+      const h2017 = (d['2017']/MAX_REF)*100;
+      const h2022 = (d['2022']/MAX_REF)*100;
+      const h2026 = (d['2026']/MAX_REF)*100;
 
-        return `
-          <div class="mini-card">
-            <div class="mini-title">${nm} <span class="mini-code">(${code})</span></div>
-            <div class="mini-bars">
-              <div class="mini-bar y2017" style="height:${h2017}%;" title="2017: ${d['2017']}"></div>
-              <div class="mini-bar y2022" style="height:${h2022}%;" title="2022: ${d['2022']}"></div>
-              <div class="mini-bar y2026" style="height:${h2026}%;" title="2026: ${d['2026']}"></div>
-            </div>
-            <div class="mini-values">
-              <span class="v">${d['2017']}</span>
-              <span class="v">${d['2022']}</span>
-              <span class="v em">${d['2026']}</span>
-            </div>
-          </div>`;
-      }).join('');
+      return `
+        <div class="mini-card">
+          <div class="mini-title">${nm} <span class="mini-code">(${code})</span></div>
+          <div class="mini-bars">
+            <div class="mini-bar y2017" style="height:${h2017}%;" title="2017: ${d['2017']}"></div>
+            <div class="mini-bar y2022" style="height:${h2022}%;" title="2022: ${d['2022']}"></div>
+            <div class="mini-bar y2026" style="height:${h2026}%;" title="2026: ${d['2026']}"></div>
+          </div>
+          <div class="mini-values">
+            <span class="v">${d['2017']}</span>
+            <span class="v">${d['2022']}</span>
+            <span class="v em">${d['2026']}</span>
+          </div>
+        </div>`;
+    }).join('');
 
-      return `<div class="mini-row" style="grid-template-columns: repeat(${cols}, minmax(0, 1fr));">${cards}</div>`;
-    };
-
+    // Single grid that wraps to multiple rows with a fixed number of columns
     return `
-      <section class="print-state-grid">
+      <section class="print-state-grid auto-pack">
         <div class="grid-title">State Staff Distribution — Mini Report</div>
         <div class="grid-legend">
           <span class="k y2017"></span> 2017 &nbsp;&nbsp;
           <span class="k y2022"></span> 2022 &nbsp;&nbsp;
           <span class="k y2026"></span> 2026
         </div>
-        <div class="rows">
-          ${rows.map(renderRow).join('')}
+        <div class="grid-pack" style="grid-template-columns: repeat(${cols}, minmax(0, 1fr));">
+          ${cards}
         </div>
       </section>
     `;
@@ -802,54 +789,71 @@
     const theme = document.documentElement.getAttribute('data-theme') || 'light';
     const headerCover = document.getElementById('pageHeader')?.outerHTML || '';
 
+    // ======== ENTIRE PRINT CSS BLOCK REPLACED (BARS16; optimized) ========
     const extraCSS = `
       @page { margin: 16mm; }
-      body { background: var(--bg); color: var(--text); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .comp-scroll-wrapper, .comp-flex-container, .bars-cluster { overflow: visible !important; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
 
-      /* Mini-cards grid (PRINT) — wider bars, better number alignment */
+      /* Allow bars/labels to render outside overflow regions when printing */
+      .comp-scroll-wrapper, .comp-flex-container, .bars-cluster {
+        overflow: visible !important;
+      }
+
+      /* ===== Mini-cards grid (PRINT) — 6 columns default (auto-shrink < 6), BARS16 ===== */
       .print-state-grid { padding: 16px 24px; }
       .print-state-grid .grid-title {
         font-family:'Bebas Neue',Impact,system-ui; letter-spacing:1px; font-size:20px; margin: 8px 0 2px;
       }
-      .print-state-grid .grid-legend { font-size:12px; color: var(--muted); margin-bottom: 12px; display:flex; align-items:center; gap:8px; }
+      .print-state-grid .grid-legend {
+        font-size:12px; color: var(--muted); margin-bottom: 12px; display:flex; align-items:center; gap:8px;
+      }
       .print-state-grid .grid-legend .k { display:inline-block; width:14px; height:10px; border-radius:2px; vertical-align:middle; }
       .print-state-grid .grid-legend .y2017 { background:#334155; opacity:.75; }
       .print-state-grid .grid-legend .y2022 { background:#3b82f6; opacity:.9; }
       .print-state-grid .grid-legend .y2026 { background:var(--accent); }
 
-      .print-state-grid .rows { display:flex; flex-direction:column; gap:14px; }
-      .print-state-grid .mini-row {
-        display:grid; gap:12px; align-items:end;
+      /* Single auto-wrapping grid; columns are injected inline via style attr */
+      .print-state-grid.auto-pack .grid-pack {
+        display:grid; gap:14px; align-items:stretch;
       }
 
+      /* Card shell */
       .print-state-grid .mini-card {
         background: var(--surface); border:1px solid var(--border); border-radius:8px;
         padding:12px; min-width:0;
       }
+
       .print-state-grid .mini-title {
         font-size:11px; color:var(--muted); margin-bottom:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
       }
       .print-state-grid .mini-title .mini-code { color:#94a3b8; }
 
-      /* Taller bar zone and WIDER bars for 3-digit labels */
+      /* Bar stack — taller + wider bars for 3-digit values */
       .print-state-grid .mini-bars {
-        height:96px; display:flex; align-items:flex-end; justify-content:center; gap:10px; margin-bottom:6px;
+        height:96px;
+        display:flex; align-items:flex-end; justify-content:center;
+        gap:12px;           /* match values gap */
+        margin-bottom:6px;
       }
-      .print-state-grid .mini-bar { width:14px; border-radius:2px 2px 0 0; }
+      .print-state-grid .mini-bar { width:16px; border-radius:2px 2px 0 0; } /* BARS16 */
       .print-state-grid .mini-bar.y2017 { background:#334155; opacity:.75; }
       .print-state-grid .mini-bar.y2022 { background:#3b82f6; opacity:.9; }
       .print-state-grid .mini-bar.y2026 { background:var(--accent); }
 
-      /* Numbers below bars — center aligned, slightly tighter, tabular figures */
+      /* Numbers under bars — tabular figures prevent drift */
       .print-state-grid .mini-values {
         display:flex; justify-content:center; gap:12px; font-size:11px;
         font-variant-numeric: tabular-nums;
       }
       .print-state-grid .mini-values .em { font-weight:700; color:var(--text); }
 
+      /* Keep header watermark behavior */
       header{ position: relative; }
-      /* Keep the big 'NAFDAC' watermark from your header::after (already in the base CSS) */
     `;
 
     const html = `
