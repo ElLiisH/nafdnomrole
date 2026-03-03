@@ -731,24 +731,28 @@
     }
   }
 
-  // Build Mini-Cards Grid HTML (13 / 12 / 12) for states — Option A
+  // Build Mini-Cards Grid HTML (5 rows for wider bars in print)
   function buildStateMiniCardsHTML(filter='all'){
     // Compute codes in selected filter (zone or all)
     let codes = Object.keys(comparisonData);
     if (filter !== 'all') codes = codes.filter(c => stateMap[c].zone === filter);
+
     // Sort by full state name
     codes.sort((a,b) => stateMap[a].name.localeCompare(stateMap[b].name));
 
     // Determine scaling (keep same reference max 160 as screen chart to preserve proportions)
     const MAX_REF = 160;
 
-    // Split into rows: 13 / 12 / rest
-    const row1 = codes.slice(0, 13);
-    const row2 = codes.slice(13, 25);
-    const row3 = codes.slice(25);
+    // Split into 5 rows (near-equal distribution)
+    const rowsCount = 5;
+    const perRow = Math.ceil(codes.length / rowsCount);
+    const rows = [];
+    for (let r = 0; r < rowsCount; r++) {
+      rows.push(codes.slice(r * perRow, (r + 1) * perRow));
+    }
 
     const renderRow = (row) => {
-      const cols = row.length;
+      const cols = row.length || 1;
       const cards = row.map(code=>{
         const nm = stateMap[code].name;
         const d = comparisonData[code];
@@ -765,9 +769,9 @@
               <div class="mini-bar y2026" style="height:${h2026}%;" title="2026: ${d['2026']}"></div>
             </div>
             <div class="mini-values">
-              <span>${d['2017']}</span>
-              <span>${d['2022']}</span>
-              <span class="em">${d['2026']}</span>
+              <span class="v">${d['2017']}</span>
+              <span class="v">${d['2022']}</span>
+              <span class="v em">${d['2026']}</span>
             </div>
           </div>`;
       }).join('');
@@ -784,9 +788,7 @@
           <span class="k y2026"></span> 2026
         </div>
         <div class="rows">
-          ${renderRow(row1)}
-          ${renderRow(row2)}
-          ${renderRow(row3)}
+          ${rows.map(renderRow).join('')}
         </div>
       </section>
     `;
@@ -805,7 +807,7 @@
       body { background: var(--bg); color: var(--text); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .comp-scroll-wrapper, .comp-flex-container, .bars-cluster { overflow: visible !important; }
 
-      /* Mini-cards grid */
+      /* Mini-cards grid (PRINT) — wider bars, better number alignment */
       .print-state-grid { padding: 16px 24px; }
       .print-state-grid .grid-title {
         font-family:'Bebas Neue',Impact,system-ui; letter-spacing:1px; font-size:20px; margin: 8px 0 2px;
@@ -818,26 +820,32 @@
 
       .print-state-grid .rows { display:flex; flex-direction:column; gap:14px; }
       .print-state-grid .mini-row {
-        display:grid; gap:10px; align-items:end;
+        display:grid; gap:12px; align-items:end;
       }
 
       .print-state-grid .mini-card {
         background: var(--surface); border:1px solid var(--border); border-radius:8px;
-        padding:10px; min-width:0;
+        padding:12px; min-width:0;
       }
       .print-state-grid .mini-title {
-        font-size:11px; color:var(--muted); margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        font-size:11px; color:var(--muted); margin-bottom:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
       }
       .print-state-grid .mini-title .mini-code { color:#94a3b8; }
+
+      /* Taller bar zone and WIDER bars for 3-digit labels */
       .print-state-grid .mini-bars {
-        height:80px; display:flex; align-items:flex-end; justify-content:center; gap:6px; margin-bottom:6px;
+        height:96px; display:flex; align-items:flex-end; justify-content:center; gap:10px; margin-bottom:6px;
       }
-      .print-state-grid .mini-bar { width:8px; border-radius:2px 2px 0 0; }
+      .print-state-grid .mini-bar { width:14px; border-radius:2px 2px 0 0; }
       .print-state-grid .mini-bar.y2017 { background:#334155; opacity:.75; }
       .print-state-grid .mini-bar.y2022 { background:#3b82f6; opacity:.9; }
       .print-state-grid .mini-bar.y2026 { background:var(--accent); }
 
-      .print-state-grid .mini-values { display:flex; justify-content:center; gap:10px; font-size:11px; }
+      /* Numbers below bars — center aligned, slightly tighter, tabular figures */
+      .print-state-grid .mini-values {
+        display:flex; justify-content:center; gap:12px; font-size:11px;
+        font-variant-numeric: tabular-nums;
+      }
       .print-state-grid .mini-values .em { font-weight:700; color:var(--text); }
 
       header{ position: relative; }
