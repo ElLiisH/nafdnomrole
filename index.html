@@ -437,19 +437,7 @@
 
   const comparisonData = {"ABI":{"2017":57,"2022":51,"2026":42},"ABJ":{"2017":17,"2022":16,"2026":19},"ADA":{"2017":59,"2022":61,"2026":62},"AKW":{"2017":83,"2022":69,"2026":62},"ANA":{"2017":152,"2022":129,"2026":119},"BAU":{"2017":32,"2022":30,"2026":31},"BAY":{"2017":30,"2022":28,"2026":27},"BEN":{"2017":115,"2022":99,"2026":91},"BOR":{"2017":67,"2022":68,"2026":69},"CRO":{"2017":50,"2022":52,"2026":51},"DEL":{"2017":114,"2022":102,"2026":86},"EBO":{"2017":40,"2022":44,"2026":45},"EDO":{"2017":106,"2022":91,"2026":79},"EKI":{"2017":54,"2022":48,"2026":42},"ENU":{"2017":76,"2022":75,"2026":68},"GOM":{"2017":43,"2022":44,"2026":45},"IMO":{"2017":130,"2022":112,"2026":100},"JIG":{"2017":29,"2022":35,"2026":34},"KAD":{"2017":73,"2022":71,"2026":66},"KAN":{"2017":40,"2022":45,"2026":47},"KAT":{"2017":38,"2022":44,"2026":43},"KEB":{"2017":35,"2022":37,"2026":40},"KOG":{"2017":119,"2022":113,"2026":101},"KWA":{"2017":75,"2022":76,"2026":75},"LAG":{"2017":56,"2022":50,"2026":43},"NAS":{"2017":42,"2022":42,"2026":46},"NIG":{"2017":44,"2022":46,"2026":44},"OGU":{"2017":77,"2022":55,"2026":46},"OND":{"2017":52,"2022":48,"2026":46},"OSU":{"2017":72,"2022":68,"2026":66},"OYO":{"2017":68,"2022":63,"2026":57},"PLA":{"2017":57,"2022":54,"2026":56},"RIV":{"2017":45,"2022":41,"2026":42},"SOK":{"2017":22,"2022":32,"2026":34},"TAR":{"2017":41,"2022":43,"2026":45},"YOB":{"2017":24,"2022":32,"2026":30},"ZAM":{"2017":37,"2022":38,"2026":39}};
 
-  /* Staff dataset (sample entries + fillers) */
-  const realStaffData = [
-    { sn: 1, name: "PROF ADEYEYE CHRISTIANAH MOJI", rank: "DIRECTOR GENERAL", id: "SS/2671", state: "OSU", dir: "DGO", loc: "CHQ" },
-    { sn: 2, name: "DR MOMODU RAMETU O", rank: "DIRECTOR", id: "SS/130", state: "EDO", dir: "NCS", loc: "ISOLO" },
-    { sn: 3, name: "MRS EDWARDS EVA OBIAGELI", rank: "DIRECTOR", id: "SS/1075", state: "LAG", dir: "FS&AN", loc: "ISOLO" },
-    { sn: 4, name: "MR SHABA MOHAMMED", rank: "DIRECTOR", id: "SS/534", state: "NIG", dir: "REGULATORY", loc: "SEZ/ENU" },
-    { sn: 5, name: "MRS SONNY-AFOEKELU UCHENNA M", rank: "DIRECTOR", id: "SS/781", state: "ANA", dir: "D R&R", loc: "ISOLO" },
-    { sn: 6, name: "MR OMOKPARIOLA PATRICK LEONARD", rank: "DIRECTOR", id: "SS/940", state: "EDO", dir: "CER", loc: "ISOLO" },
-    { sn: 7, name: "MR BABATUNDE A YUSUF", rank: "DIRECTOR", id: "SS/895", state: "LAG", dir: "LS OSHODI", loc: "OSHODI" },
-    { sn: 8, name: "MR AZIKIWE KENNETH ONYEOGHANE", rank: "DIRECTOR", id: "SS/181", state: "DEL", dir: "REGULATORY", loc: "NCZ/JOS" },
-    { sn: 9, name: "MR FRADEN BITRUS DASNIYAM", rank: "DIRECTOR", id: "SS/978", state: "ADA", dir: "PMS", loc: "CHQ" },
-    { sn:10, name: "MR ILUYOMADE MARTINS A", rank: "DIRECTOR", id: "SS/1143", state: "OND", dir: "I&E", loc: "APAPA" }
-  ];
+  
   for(let i=11;i<=61;i++){
     if(!realStaffData.find(x=>x.sn===i)){
       realStaffData.push({
