@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Staff to Nominal Roll</title>
-    <!-- Supabase JS Client CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -66,7 +64,7 @@
             color: white;
         }
         .btn-submit:disabled {
-            background-color: #94d3a2;
+            background-color: #8bc34a;
             cursor: not-allowed;
         }
         .btn-cancel {
@@ -76,10 +74,11 @@
             text-align: center;
         }
         .alert {
-            padding: 10px 15px;
+            padding: 12px;
             margin-bottom: 15px;
             border-radius: 4px;
             display: none;
+            font-weight: bold;
         }
         .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
@@ -89,7 +88,7 @@
 
 <div class="form-container">
     <h2>Add New Staff Entry</h2>
-    
+
     <div id="statusAlert" class="alert"></div>
 
     <form id="addStaffForm">
@@ -173,12 +172,6 @@
 </div>
 
 <script>
-    // 1. Supabase Credentials
-    const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-    
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     const form = document.getElementById('addStaffForm');
     const submitBtn = document.getElementById('submitBtn');
     const alertBox = document.getElementById('statusAlert');
@@ -190,36 +183,39 @@
     }
 
     form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Stop default HTTP POST behavior triggering 405
+        e.preventDefault(); // Prevents default form submission (405 error)
 
         submitBtn.disabled = true;
         submitBtn.textContent = 'Saving...';
         alertBox.style.display = 'none';
 
-        // Extract form values, converting empty string dates to null
+        // Convert form data into a key-value JSON object
         const formData = new FormData(form);
-        const record = {};
-        
+        const payload = {};
         formData.forEach((value, key) => {
-            if ((key.includes('date') || key === 'first_appt_date' || key === 'current_appt_date') && value === '') {
-                record[key] = null;
-            } else {
-                record[key] = value.trim();
-            }
+            payload[key] = value.trim();
         });
 
         try {
-            const { data, error } = await supabaseClient
-                .from('staff')
-                .insert([record]);
+            const response = await fetch('/api/staff', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
 
-            if (error) throw error;
+            const result = await response.json();
 
-            showAlert('Staff record saved successfully!');
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to submit form');
+            }
+
+            showAlert('Staff record successfully saved!');
             form.reset();
-        } catch (error) {
-            console.error('Supabase Error:', error);
-            showAlert(`Failed to save record: ${error.message}`, true);
+        } catch (err) {
+            console.error('Submission Error:', err);
+            showAlert(`Error: ${err.message}`, true);
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = 'Save Staff Record';
