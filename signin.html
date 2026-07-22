@@ -3,126 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAFDAC Admin Login - Debug Mode</title>
+    <title>NAFDAC Admin Login</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: 'DM Sans', sans-serif; background: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1rem; box-sizing: border-box; }
-        .login-card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 450px; border-top: 5px solid #013220; }
+        body { font-family: 'DM Sans', sans-serif; background: #f8fafc; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; border-top: 5px solid #013220; }
         .logo { text-align: center; margin-bottom: 1.5rem; }
-        h2 { color: #013220; text-align: center; margin-bottom: 1.5rem; }
-        .input-group { margin-bottom: 1.25rem; }
+        h2 { color: #013220; text-align: center; margin-bottom: 2rem; }
+        .input-group { margin-bottom: 1.5rem; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #334155; }
         input { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 0.75rem; background: #013220; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
+        button { width: 100%; padding: 0.75rem; background: #013220; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         button:hover { background: #0c3f2c; }
-        .error { color: #d32f2f; background-color: #fde8e8; border: 1px solid #f8b4b4; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem; margin-top: 1rem; display: none; word-break: break-word; }
-        .debug-box { background: #1e293b; color: #38bdf8; font-family: monospace; font-size: 0.8rem; padding: 0.75rem; border-radius: 6px; margin-top: 1rem; max-height: 150px; overflow-y: auto; text-align: left; white-space: pre-wrap; display: none; }
+        .error { color: #d32f2f; font-size: 0.875rem; margin-top: 1rem; text-align: center; display: none; }
     </style>
 </head>
 <body>
     <div class="login-card">
         <div class="logo">🟢 <strong>NAFDAC</strong></div>
         <h2>Admin Portal</h2>
-        
         <div class="input-group">
-            <label id="input-label">Username or Email</label>
-            <input type="text" id="username_or_email" placeholder="admin_nafdac">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="admin@nafdac.gov.ng">
         </div>
-        
         <div class="input-group">
             <label>Password</label>
             <input type="password" id="password" placeholder="••••••••">
         </div>
-        
         <button onclick="handleLogin()">Sign In</button>
-        
         <div id="error-msg" class="error"></div>
-        <div id="debug-log" class="debug-box">--- Debug Logs ---</div>
     </div>
 
     <script>
-        // Logging utility function
-        function logDebug(message, isError = false) {
-            console.log(`[DEBUG]: ${message}`);
-            const debugLog = document.getElementById('debug-log');
-            debugLog.style.display = 'block';
-            debugLog.innerHTML += `\n${isError ? '❌' : 'ℹ️'} ${message}`;
-            debugLog.scrollTop = debugLog.scrollHeight;
-        }
-
-        // 1. Check if Supabase SDK loaded
-        if (typeof supabase === 'undefined') {
-            logDebug("Supabase JS Library failed to load! Check network connection or CDN URL.", true);
-        } else {
-            logDebug("Supabase SDK loaded successfully.");
-        }
-
-        // 2. Initialize Supabase Client
-        // REPLACE THESE WITH YOUR EXACT SUPABASE PROJECT KEYS
         const SUPABASE_URL = "https://ivzrnkdyymngghidqkyd.supabase.co";
         const SUPABASE_KEY = "sb_publishable__Lh8NcOsPD8nB-tUFQ8TWg_twyCtW0V";
 
-        let supabaseClient;
-        try {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            logDebug("Supabase client initialized.");
-        } catch (e) {
-            logDebug(`Client Initialization Error: ${e.message}`, true);
-        }
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function handleLogin() {
-            const errorDiv = document.getElementById('error-msg');
-            const debugLog = document.getElementById('debug-log');
-            
-            // Reset UI
-            errorDiv.style.display = 'none';
-            debugLog.innerHTML = '--- Debug Logs ---';
-
-            const userVal = document.getElementById('username_or_email').value.trim();
+            const userVal = document.getElementById('email').value.trim();
             const passwordVal = document.getElementById('password').value.trim();
+            const errorDiv = document.getElementById('error-msg');
 
-            logDebug(`Attempting login for input: "${userVal}"`);
+            errorDiv.style.display = 'none';
 
             if (!userVal || !passwordVal) {
-                errorDiv.innerText = "Please enter both username/email and password.";
+                errorDiv.innerText = "Please enter both email and password.";
                 errorDiv.style.display = 'block';
-                logDebug("Validation failed: Empty inputs.", true);
                 return;
             }
 
-            try {
-                // Testing query against custom 'users' table from your screenshot
-                logDebug("Executing query against 'users' table...");
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: userVal,
+                password: passwordVal
+            });
 
-                const { data, error } = await supabaseClient
-                    .from('users')
-                    .select('*')
-                    .eq('username', userVal)
-                    .eq('password', passwordVal);
-
-                if (error) {
-                    logDebug(`Supabase Query Error: ${error.message} (Code: ${error.code})`, true);
-                    errorDiv.innerText = `Database Error: ${error.message}`;
-                    errorDiv.style.display = 'block';
-                    return;
-                }
-
-                logDebug(`Query finished. Returned ${data ? data.length : 0} rows.`);
-
-                if (data && data.length > 0) {
-                    logDebug("User matched successfully! Preparing redirect...", false);
-                    alert("Login Successful! Redirecting to index.html...");
-                    window.location.href = 'index.html';
-                } else {
-                    logDebug("No matching user found with provided credentials.", true);
-                    errorDiv.innerText = "Invalid username or password.";
-                    errorDiv.style.display = 'block';
-                }
-
-            } catch (err) {
-                logDebug(`Unhandled JS Exception: ${err.message}`, true);
-                errorDiv.innerText = `System Error: ${err.message}`;
+            if (error) {
+                errorDiv.innerText = error.message;
                 errorDiv.style.display = 'block';
+            } else {
+                window.location.href = 'index.html';
             }
         }
     </script>
