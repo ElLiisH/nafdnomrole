@@ -5,9 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NAFDAC Staff Distribution — Live Nominal Roll 2026</title>
 
-  <!-- (Optional) Google Fonts; not required for hover/labels/toggle to work
-  https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;500;700&display=swap
-  -->
+  <!-- Supabase Auth SDK & Access Guard -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://ivzrnkdyymngghidqkyd.supabase.co";
+    const SUPABASE_KEY = "sb_publishable__Lh8NcOsPD8nB-tUFQ8TWg_twyCtW0V";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Auth Protection Guard
+    (async function checkAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session) {
+        window.location.href = 'signin.html';
+      }
+    })();
+  </script>
 
   <style>
   /* =========================
@@ -160,6 +172,44 @@
     margin:30px 0;display:flex;align-items:center;gap:14px;
   }
   .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+
+  /* Custom Action Buttons Styling */
+  .admin-action-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .btn-add-staff {
+    background: var(--brand);
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-add-staff:hover {
+    background: var(--brand-600);
+  }
+  .btn-remove-staff {
+    background: var(--accent-red);
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-remove-staff:hover {
+    background: var(--accent-red-600);
+  }
 
   /* Cards & containers */
   .card,.milestone-container,.comp-chart-section,.table-container,.staff-controls,.zone-card,.state-card{
@@ -407,6 +457,7 @@
   /* === HIDE ALL BUTTONS DURING PRINT OUTPUT === */
   @media print {
     .print-btn,
+    .admin-action-bar,
     #previewToolbar,
     #mobileMenuBtn,
     .nav-item,
@@ -469,6 +520,9 @@ html[data-theme='dark'] .mini-values .v{color:var(--on-brand);}
       <button class="nav-item staff-nav-item" id="navStaff" onclick="switchView('staff')">
         <div class="nav-dot" style="background:var(--accent)" aria-hidden="true"></div> Verified Staff (2,038)
       </button>
+      <button class="nav-item" style="margin-top: 10px; color: #ef4444;" onclick="handleLogout()">
+        🚪 Sign Out
+      </button>
     </div>
   </div>
 
@@ -483,6 +537,12 @@ html[data-theme='dark'] .mini-values .v{color:var(--on-brand);}
                      color:var(--text); border-radius:8px; padding:8px 10px; font-size:14px;">
         ☰
       </button>
+
+      <!-- Staff Action Buttons placed right before Dashboard Overview elements -->
+      <div class="admin-action-bar">
+        <button class="btn-add-staff" onclick="addStaffModal()">+ Add Staff to Nominal Role</button>
+        <button class="btn-remove-staff" onclick="removeStaffModal()">- Remove Staff from Nominal Role</button>
+      </div>
 
       <div class="header-label" id="liveDateLabel">Official Nominal Roll Analysis · Feb 2026</div>
       <h1 id="mainTitle">NAFDAC Staff<br>Distribution</h1>
@@ -631,6 +691,25 @@ html[data-theme='dark'] .mini-values .v{color:var(--on-brand);}
   <script src="realStaffData.js"></script>
 
   <script>
+  /* =========================
+     AUTH LOGOUT HANDLER
+     ========================= */
+  async function handleLogout() {
+    await supabaseClient.auth.signOut();
+    window.location.href = 'signin.html';
+  }
+
+  /* =========================
+     ADMIN ACTION PLACEHOLDERS
+     ========================= */
+  function addStaffModal() {
+    alert("Add Staff module triggered.");
+  }
+
+  function removeStaffModal() {
+    alert("Remove Staff module triggered.");
+  }
+
   /* =========================
      DATA
      ========================= */
