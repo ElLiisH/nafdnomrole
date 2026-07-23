@@ -15,16 +15,19 @@ module.exports = async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed. Use POST.' });
     }
 
-    // Read Environment Variables inside the request context
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+    // Read and trim Environment Variables
+    let supabaseUrl = process.env.SUPABASE_URL;
+    let supabaseKey = process.env.SUPABASE_ANON_KEY;
 
-    // Helpful check if keys are missing on Vercel
     if (!supabaseUrl || !supabaseKey) {
         return res.status(500).json({ 
-            error: 'Server configuration error: SUPABASE_URL or SUPABASE_ANON_KEY environment variable is missing on Vercel.' 
+            error: 'Server configuration error: SUPABASE_URL or SUPABASE_ANON_KEY is missing on Vercel.' 
         });
     }
+
+    // Strip trailing slash if present to avoid "Invalid path specified in request URL"
+    supabaseUrl = supabaseUrl.trim().replace(/\/+$/, '');
+    supabaseKey = supabaseKey.trim();
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
