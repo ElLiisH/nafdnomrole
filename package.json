@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/ElLiisH/nafdnomrole#readme",
   "dependencies": {
-    "@supabase/supabase-js": "^2.110.8"
+    "@supabase/supabase-js": "^2.39.0"
   }
 }
