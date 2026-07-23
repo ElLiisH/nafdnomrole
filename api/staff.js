@@ -14,12 +14,12 @@ module.exports = async function handler(req, res) {
     }
 
     try {
-        // Require Supabase inside handler to capture module load issues cleanly
         const { createClient } = require('@supabase/supabase-js');
 
-        const supabaseUrl = 'https://ivzrnkdyymngghidqkyd.supabase.co';
+        // MATCHING PROJECT URL
+        const supabaseUrl = 'https://wzwknwosmqgxxzmdhhkm.supabase.co';
         
-        // PASTE YOUR LONG service_role JWT KEY HERE (must start with eyJ...)
+        // MATCHING SERVICE_ROLE KEY
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6d2tud29zbXFneHh6bWRoaGttIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzM1ODQ4NCwiZXhwIjoyMDkyOTM0NDg0fQ.TGkAX3GhPXXdAKwTGxXio2aZ_4KBIwnoTdYJSfY3xkE';
 
         const supabase = createClient(supabaseUrl, supabaseKey);
