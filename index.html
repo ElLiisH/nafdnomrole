@@ -801,15 +801,25 @@
   function changePage(delta){ currentPage += delta; renderStaffList(); window.scrollTo({top: 0, behavior: 'smooth'}); }
 
   function handleGlobalSearch(){
-    const val = document.getElementById('globalSearch').value.toLowerCase();
-    switchView('staff');
-    filteredStaff = (window.realStaffData || []).filter(s =>
-      s.name.toLowerCase().includes(val) ||
-      s.id.toLowerCase().includes(val) ||
-      s.state.toLowerCase().includes(val)
-    );
-    currentPage = 1; renderStaffList();
+  const val = document.getElementById('globalSearch').value.trim().toLowerCase();
+  switchView('staff');
+
+  if (!val) {
+    filteredStaff = window.realStaffData || [];
+  } else {
+    filteredStaff = (window.realStaffData || []).filter(s => {
+      const nameMatch = s.name && s.name.toLowerCase().includes(val);
+      const idMatch = s.id && String(s.id).toLowerCase().includes(val);
+      const stateMatch = s.state && s.state.toLowerCase().includes(val);
+      const dirMatch = s.dir && s.dir.toLowerCase().includes(val);
+
+      return nameMatch || idMatch || stateMatch || dirMatch;
+    });
   }
+
+  currentPage = 1;
+  renderStaffList();
+}
 
   function filterStaffTable(){
     const val = document.getElementById('localTableSearch').value.toLowerCase();
@@ -1290,7 +1300,60 @@
     diagUpdate();
   }
 
-  init();
+  // Replace your existing init() or add a live fetch function
+async function loadLiveStaffData() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('staff')
+      .select('*')
+      .order('id', { ascending: true });
+
+    if (error) {
+      console.error('Error loading Supabase staff:', error.message);
+      // Fallback to static JS file if DB fetch fails
+      window.realStaffData = window.realStaffData || [];
+    } else if (data && data.length > 0) {
+      // Map database columns to the UI schema expected by index.php
+      window.realStaffData = data.map((item, index) => {
+        const fullName = [item.surname, item.first_name, item.other_names]
+          .filter(Boolean)
+          .join(' ');
+
+        return {
+          sn: index + 1,
+          name: fullName || item.name || 'N/A',
+          id: item.staff_id || item.id || '',
+          rank: item.rank || 'N/A',
+          state: item.state || 'N/A',
+          dir: item.dept || item.dir || 'N/A',
+          loc: item.location || item.loc || 'N/A'
+        };
+      });
+    }
+
+    filteredStaff = window.realStaffData;
+    updateCounters();
+    renderStaffList();
+  } catch (err) {
+    console.error('Failed to load live staff data:', err);
+  }
+}
+
+// Modify init() to call loadLiveStaffData()
+async function init(){
+  initTheme();
+  updateLiveDates();
+  
+  await loadLiveStaffData(); // <--- Load live database records
+
+  filterData('all');
+  renderZonalComparison('all');
+  updateZoneBundlePrintButton();
+  applyHashOnLoad();
+
+  toast('Dashboard Ready', 'Live nominal roll synchronized');
+  diagUpdate();
+}
   </script>
 </body>
 </html>
