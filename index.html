@@ -669,6 +669,7 @@
     </footer>
   </div>
 
+  <!-- Static Fallback Data -->
   <script src="realStaffData.js"></script>
 
   <script>
@@ -763,7 +764,7 @@
     const tbody = document.getElementById('staffTableBody');
     tbody.innerHTML = '';
     
-    if (filteredStaff.length === 0) {
+    if (!filteredStaff || filteredStaff.length === 0) {
       tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 24px; color: var(--muted);">No staff records found.</td></tr>`;
       document.getElementById('staffRange').innerText = `0 - 0`;
       document.getElementById('totalVisible').innerText = '0';
@@ -779,13 +780,13 @@
     subset.forEach(s => {
       tbody.innerHTML += `
         <tr>
-          <td style="color:var(--muted)">${s.sn}</td>
-          <td class="td-bold">${s.name}</td>
-          <td>${s.rank}</td>
-          <td style="color:var(--accent)">${s.id}</td>
-          <td>${s.state}</td>
-          <td>${s.dir}</td>
-          <td>${s.loc}</td>
+          <td style="color:var(--muted)">${s.sn || '-'}</td>
+          <td class="td-bold">${s.name || 'N/A'}</td>
+          <td>${s.rank || 'N/A'}</td>
+          <td style="color:var(--accent)">${s.id || 'N/A'}</td>
+          <td>${s.state || 'N/A'}</td>
+          <td>${s.dir || 'N/A'}</td>
+          <td>${s.loc || 'N/A'}</td>
           <td>
             <button class="btn-table-delete" onclick="deleteStaffRecord('${s.id}')">Delete</button>
           </td>
@@ -801,32 +802,32 @@
   function changePage(delta){ currentPage += delta; renderStaffList(); window.scrollTo({top: 0, behavior: 'smooth'}); }
 
   function handleGlobalSearch(){
-  const val = document.getElementById('globalSearch').value.trim().toLowerCase();
-  switchView('staff');
+    const val = document.getElementById('globalSearch').value.trim().toLowerCase();
+    switchView('staff');
 
-  if (!val) {
-    filteredStaff = window.realStaffData || [];
-  } else {
-    filteredStaff = (window.realStaffData || []).filter(s => {
-      const nameMatch = s.name && s.name.toLowerCase().includes(val);
-      const idMatch = s.id && String(s.id).toLowerCase().includes(val);
-      const stateMatch = s.state && s.state.toLowerCase().includes(val);
-      const dirMatch = s.dir && s.dir.toLowerCase().includes(val);
+    if (!val) {
+      filteredStaff = window.realStaffData || [];
+    } else {
+      filteredStaff = (window.realStaffData || []).filter(s => {
+        const nameMatch = s.name && s.name.toLowerCase().includes(val);
+        const idMatch = s.id && String(s.id).toLowerCase().includes(val);
+        const stateMatch = s.state && s.state.toLowerCase().includes(val);
+        const dirMatch = s.dir && s.dir.toLowerCase().includes(val);
 
-      return nameMatch || idMatch || stateMatch || dirMatch;
-    });
+        return nameMatch || idMatch || stateMatch || dirMatch;
+      });
+    }
+
+    currentPage = 1;
+    renderStaffList();
   }
-
-  currentPage = 1;
-  renderStaffList();
-}
 
   function filterStaffTable(){
     const val = document.getElementById('localTableSearch').value.toLowerCase();
     filteredStaff = (window.realStaffData || []).filter(s =>
-      s.name.toLowerCase().includes(val) ||
-      s.id.toLowerCase().includes(val) ||
-      s.dir.toLowerCase().includes(val)
+      (s.name && s.name.toLowerCase().includes(val)) ||
+      (s.id && String(s.id).toLowerCase().includes(val)) ||
+      (s.dir && s.dir.toLowerCase().includes(val))
     );
     currentPage = 1; renderStaffList();
   }
@@ -858,6 +859,8 @@
   function renderDashboardCharts(filter){
     const chart = document.getElementById('compChartContainer');
     const table = document.getElementById('dataTableBody');
+    if (!chart || !table) return;
+
     chart.innerHTML = ''; table.innerHTML = '';
 
     const t0 = performance.now();
@@ -909,6 +912,8 @@
   function renderZones(filter){
     const grid = document.getElementById('zonesGrid');
     const sGrid = document.getElementById('statesGrid');
+    if (!grid || !sGrid) return;
+
     grid.innerHTML = ''; sGrid.innerHTML = '';
     const zones = filter === 'all' ? Object.keys(zoneColors) : [filter];
 
@@ -980,13 +985,15 @@
 
   /* Zone nav buttons */
   const zoneNavList = document.getElementById('zoneNavList');
-  Object.keys(zoneColors).forEach(z => {
-    const b = document.createElement('button');
-    b.className = 'nav-item';
-    b.innerHTML = `<div class="nav-dot" style="background:${zoneColors[z]}"></div> ${z}`;
-    b.onclick = () => { switchView('dashboard'); filterData(z,b); };
-    zoneNavList.appendChild(b);
-  });
+  if (zoneNavList) {
+    Object.keys(zoneColors).forEach(z => {
+      const b = document.createElement('button');
+      b.className = 'nav-item';
+      b.innerHTML = `<div class="nav-dot" style="background:${zoneColors[z]}"></div> ${z}`;
+      b.onclick = () => { switchView('dashboard'); filterData(z,b); };
+      zoneNavList.appendChild(b);
+    });
+  }
 
   function filterData(zone, el){
     if(el){ document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
@@ -1005,8 +1012,8 @@
   function applyTheme(theme){
     document.documentElement.setAttribute('data-theme', theme);
     const isDark = theme === 'dark';
-    themeToggleBtn.setAttribute('aria-pressed', isDark);
-    themeToggleLabel.textContent = isDark ? 'Light' : 'Dark';
+    if (themeToggleBtn) themeToggleBtn.setAttribute('aria-pressed', isDark);
+    if (themeToggleLabel) themeToggleLabel.textContent = isDark ? 'Light' : 'Dark';
   }
 
   function initTheme(){
@@ -1016,12 +1023,14 @@
     applyTheme(prefersDark ? 'dark' : 'light');
   }
 
-  themeToggleBtn.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
-    localStorage.setItem(THEME_KEY, next);
-  });
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+    });
+  }
 
   /* Printing System */
   function updateZoneBundlePrintButton(){
@@ -1285,75 +1294,64 @@
     if(typeof filterStaffTable === 'function') window.filterStaffTable = debounce(filterStaffTable, 220);
   })();
 
-  /* Initialization */
-  function init(){
+  /* Fetch Live Data Safely from Supabase */
+  async function loadLiveStaffData() {
+    try {
+      const { data, error } = await supabaseClient
+        .from('staff')
+        .select('*')
+        .order('id', { ascending: true });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        window.realStaffData = data.map((item, index) => {
+          const fullName = [item.surname, item.first_name, item.other_names]
+            .filter(Boolean)
+            .join(' ');
+
+          return {
+            sn: index + 1,
+            name: fullName || item.name || 'N/A',
+            id: item.staff_id || item.id || '',
+            rank: item.rank || 'N/A',
+            state: item.state || 'N/A',
+            dir: item.dept || item.dir || 'N/A',
+            loc: item.location || item.loc || 'N/A'
+          };
+        });
+      }
+    } catch (err) {
+      console.warn('Supabase fetch failed or table empty, falling back to realStaffData.js:', err.message || err);
+      if (!window.realStaffData || window.realStaffData.length === 0) {
+        window.realStaffData = typeof realStaffData !== 'undefined' ? realStaffData : [];
+      }
+    }
+  }
+
+  /* Master Application Initialization */
+  async function init(){
     initTheme();
     updateLiveDates();
+    
+    // Fetch live Supabase records or fallback
+    await loadLiveStaffData();
+
+    filteredStaff = window.realStaffData || [];
     updateCounters();
 
+    // Render Dashboard Charts & Tables safely
     filterData('all');
     renderZonalComparison('all');
     updateZoneBundlePrintButton();
     applyHashOnLoad();
 
-    toast('Dashboard Ready', 'All dynamic data synchronized');
+    toast('Dashboard Ready', 'Live nominal roll synchronized');
     diagUpdate();
   }
 
-  // Replace your existing init() or add a live fetch function
-async function loadLiveStaffData() {
-  try {
-    const { data, error } = await supabaseClient
-      .from('staff')
-      .select('*')
-      .order('id', { ascending: true });
-
-    if (error) {
-      console.error('Error loading Supabase staff:', error.message);
-      // Fallback to static JS file if DB fetch fails
-      window.realStaffData = window.realStaffData || [];
-    } else if (data && data.length > 0) {
-      // Map database columns to the UI schema expected by index.php
-      window.realStaffData = data.map((item, index) => {
-        const fullName = [item.surname, item.first_name, item.other_names]
-          .filter(Boolean)
-          .join(' ');
-
-        return {
-          sn: index + 1,
-          name: fullName || item.name || 'N/A',
-          id: item.staff_id || item.id || '',
-          rank: item.rank || 'N/A',
-          state: item.state || 'N/A',
-          dir: item.dept || item.dir || 'N/A',
-          loc: item.location || item.loc || 'N/A'
-        };
-      });
-    }
-
-    filteredStaff = window.realStaffData;
-    updateCounters();
-    renderStaffList();
-  } catch (err) {
-    console.error('Failed to load live staff data:', err);
-  }
-}
-
-// Modify init() to call loadLiveStaffData()
-async function init(){
-  initTheme();
-  updateLiveDates();
-  
-  await loadLiveStaffData(); // <--- Load live database records
-
-  filterData('all');
-  renderZonalComparison('all');
-  updateZoneBundlePrintButton();
-  applyHashOnLoad();
-
-  toast('Dashboard Ready', 'Live nominal roll synchronized');
-  diagUpdate();
-}
+  // Start application on load
+  window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
