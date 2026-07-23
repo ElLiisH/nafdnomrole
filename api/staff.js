@@ -19,7 +19,7 @@ module.exports = async function handler(req, res) {
 
     // Direct Supabase Credentials
     const supabaseUrl = 'https://ivzrnkdyymngghidqkyd.supabase.co';
-    const supabaseKey = 'sb_publishable_-A8sW_NQysSl-kN6GD9byA_0q-b96Q1';
+    const supabaseKey = 'sb_secret_Wnj5aXEXPUXWULWnSqEgDg_IGQv2-T3';
 
     // Initialize Supabase Client
     const supabase = createClient(supabaseUrl, supabaseKey);
