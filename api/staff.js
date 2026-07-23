@@ -20,7 +20,7 @@ module.exports = async function handler(req, res) {
         const supabaseUrl = 'https://ivzrnkdyymngghidqkyd.supabase.co';
         
         // PASTE YOUR LONG service_role JWT KEY HERE (must start with eyJ...)
-        const supabaseKey = 'YOUR_LONG_SERVICE_ROLE_JWT_KEY_HERE';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6d2tud29zbXFneHh6bWRoaGttIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzM1ODQ4NCwiZXhwIjoyMDkyOTM0NDg0fQ.TGkAX3GhPXXdAKwTGxXio2aZ_4KBIwnoTdYJSfY3xkE';
 
         const supabase = createClient(supabaseUrl, supabaseKey);
 
