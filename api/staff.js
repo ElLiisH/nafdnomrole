@@ -2,7 +2,7 @@
 const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async function handler(req, res) {
-    // CORS Headers
+    // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -15,26 +15,37 @@ module.exports = async function handler(req, res) {
         return res.status(405).json({ error: 'Method not allowed. Use POST.' });
     }
 
-    // Read and trim Environment Variables
-    let supabaseUrl = process.env.SUPABASE_URL;
-    let supabaseKey = process.env.SUPABASE_ANON_KEY;
+    const rawUrl = process.env.SUPABASE_URL;
+    const rawKey = process.env.SUPABASE_ANON_KEY;
 
-    if (!supabaseUrl || !supabaseKey) {
+    if (!rawUrl || !rawKey) {
         return res.status(500).json({ 
-            error: 'Server configuration error: SUPABASE_URL or SUPABASE_ANON_KEY is missing on Vercel.' 
+            error: 'Server configuration error: SUPABASE_URL or SUPABASE_ANON_KEY environment variable is missing on Vercel.' 
         });
     }
 
-    // Strip trailing slash if present to avoid "Invalid path specified in request URL"
-    supabaseUrl = supabaseUrl.trim().replace(/\/+$/, '');
-    supabaseKey = supabaseKey.trim();
+    // Thoroughly clean inputs (remove quotes, whitespace, trailing slashes)
+    const cleanKey = rawKey.replace(/['"]/g, '').trim();
+    let cleanUrl = rawUrl.replace(/['"]/g, '').trim();
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Extract ONLY origin (https://ivzrnkdyymngghidqkyd.supabase.co)
+    try {
+        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+            cleanUrl = `https://${cleanUrl}`;
+        }
+        const parsed = new URL(cleanUrl);
+        cleanUrl = parsed.origin;
+    } catch (e) {
+        return res.status(500).json({ error: `Malformed SUPABASE_URL format: "${rawUrl}"` });
+    }
+
+    // Create Supabase client with guaranteed clean URL & key
+    const supabase = createClient(cleanUrl, cleanKey);
 
     try {
         const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
-        // Clean empty string values to null for optional/date fields
+        // Convert empty string form inputs to null for optional/date fields
         const cleanedData = {};
         for (const [key, value] of Object.entries(body)) {
             if (typeof value === 'string' && value.trim() === '') {
