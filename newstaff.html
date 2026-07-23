@@ -82,6 +82,41 @@
         }
         .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* DEBUG CONSOLE STYLES */
+        .debug-panel {
+            margin-top: 25px;
+            background: #1e1e1e;
+            color: #00ff66;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85em;
+        }
+        .debug-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        .debug-log {
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .btn-copy {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
     </style>
 </head>
 <body>
@@ -169,12 +204,33 @@
             <button type="submit" id="submitBtn" class="btn btn-submit">Save Staff Record</button>
         </div>
     </form>
+
+    <!-- DEBUG CONSOLE COMPONENT -->
+    <div class="debug-panel">
+        <div class="debug-header">
+            <span><strong>Live Debug Console</strong></span>
+            <button class="btn-copy" onclick="copyDebugLog()">Copy Log</button>
+        </div>
+        <div id="debugLog" class="debug-log">Ready for form submission...</div>
+    </div>
 </div>
 
 <script>
     const form = document.getElementById('addStaffForm');
     const submitBtn = document.getElementById('submitBtn');
     const alertBox = document.getElementById('statusAlert');
+    const debugLog = document.getElementById('debugLog');
+
+    function logDebug(message) {
+        const timestamp = new Date().toISOString().substring(11, 19);
+        debugLog.textContent += `\n[${timestamp}] ${message}`;
+        debugLog.scrollTop = debugLog.scrollHeight;
+    }
+
+    function copyDebugLog() {
+        navigator.clipboard.writeText(debugLog.textContent);
+        alert('Debug log copied to clipboard!');
+    }
 
     function showAlert(message, isError = false) {
         alertBox.textContent = message;
@@ -183,20 +239,23 @@
     }
 
     form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevents default form submission (405 error)
+        e.preventDefault();
 
         submitBtn.disabled = true;
         submitBtn.textContent = 'Saving...';
         alertBox.style.display = 'none';
 
-        // Convert form data into a key-value JSON object
         const formData = new FormData(form);
         const payload = {};
         formData.forEach((value, key) => {
             payload[key] = value.trim();
         });
 
+        logDebug(`Initiating POST request to /api/staff`);
+        logDebug(`Payload keys sent: ${Object.keys(payload).join(', ')}`);
+
         try {
+            const startTime = performance.now();
             const response = await fetch('/api/staff', {
                 method: 'POST',
                 headers: {
@@ -205,16 +264,30 @@
                 body: JSON.stringify(payload)
             });
 
-            const result = await response.json();
+            const duration = Math.round(performance.now() - startTime);
+            logDebug(`Response Received | Status: ${response.status} ${response.statusText} | Duration: ${duration}ms`);
+
+            const rawText = await response.text();
+            logDebug(`Raw Server Response: ${rawText}`);
+
+            let result;
+            try {
+                result = JSON.parse(rawText);
+            } catch (pErr) {
+                logDebug(`Failed to parse response as JSON.`);
+                throw new Error('Server returned non-JSON response.');
+            }
 
             if (!response.ok) {
                 throw new Error(result.error || 'Failed to submit form');
             }
 
             showAlert('Staff record successfully saved!');
+            logDebug('SUCCESS: Record created in database.');
             form.reset();
         } catch (err) {
             console.error('Submission Error:', err);
+            logDebug(`ERROR CAUGHT: ${err.message}`);
             showAlert(`Error: ${err.message}`, true);
         } finally {
             submitBtn.disabled = false;
