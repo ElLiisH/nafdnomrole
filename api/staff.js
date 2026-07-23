@@ -2,59 +2,45 @@
 const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async function handler(req, res) {
-    // Enable CORS
+    // Enable CORS for frontend requests
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+    // Handle preflight OPTIONS request
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }
 
+    // Restrict endpoint to POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed. Use POST.' });
     }
 
-    const rawUrl = process.env.SUPABASE_URL;
-    const rawKey = process.env.SUPABASE_ANON_KEY;
+    // Direct Supabase Credentials
+    const supabaseUrl = 'https://ivzrnkdyymngghidqkyd.supabase.co';
+    const supabaseKey = 'sb_publishable_-A8sW_NQysSl-kN6GD9byA_0q-b96Q1';
 
-    if (!rawUrl || !rawKey) {
-        return res.status(500).json({ 
-            error: 'Server configuration error: SUPABASE_URL or SUPABASE_ANON_KEY environment variable is missing on Vercel.' 
-        });
-    }
-
-    // Thoroughly clean inputs (remove quotes, whitespace, trailing slashes)
-    const cleanKey = rawKey.replace(/['"]/g, '').trim();
-    let cleanUrl = rawUrl.replace(/['"]/g, '').trim();
-
-    // Extract ONLY origin (https://ivzrnkdyymngghidqkyd.supabase.co)
-    try {
-        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
-            cleanUrl = `https://${cleanUrl}`;
-        }
-        const parsed = new URL(cleanUrl);
-        cleanUrl = parsed.origin;
-    } catch (e) {
-        return res.status(500).json({ error: `Malformed SUPABASE_URL format: "${rawUrl}"` });
-    }
-
-    // Create Supabase client with guaranteed clean URL & key
-    const supabase = createClient(cleanUrl, cleanKey);
+    // Initialize Supabase Client
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     try {
+        // Parse JSON body if passed as string
         const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
-        // Convert empty string form inputs to null for optional/date fields
+        // Clean empty string inputs to null so SQL date/optional fields don't throw syntax errors
         const cleanedData = {};
         for (const [key, value] of Object.entries(body)) {
             if (typeof value === 'string' && value.trim() === '') {
                 cleanedData[key] = null;
+            } else if (typeof value === 'string') {
+                cleanedData[key] = value.trim();
             } else {
                 cleanedData[key] = value;
             }
         }
 
+        // Insert new staff record into the public.staff table
         const { data, error } = await supabase
             .from('staff')
             .insert([cleanedData])
