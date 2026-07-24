@@ -1315,37 +1315,42 @@
 
   /* Fetch Live Data Safely from Supabase */
   async function loadLiveStaffData() {
-    try {
-      const { data, error } = await supabaseClient
-        .from('staff')
-        .select('*');
+  try {
+    // Explicitly select columns matching your schema to avoid malformed URL queries
+    const { data, error, status } = await supabaseClient
+      .from('staff')
+      .select('id, surname, first_name, other_names, rank, staff_id, state, dept, location');
 
-      if (error) throw error;
+    if (error) {
+      console.error(`Supabase API Error [Status ${status}]:`, error);
+      throw error;
+    }
 
-      if (data && data.length > 0) {
-        window.realStaffData = data.map((item, index) => {
-          const fullName = [item.surname, item.first_name, item.other_names]
-            .filter(Boolean)
-            .join(' ');
+    if (data && data.length > 0) {
+      window.realStaffData = data.map((item, index) => {
+        const fullName = [item.surname, item.first_name, item.other_names]
+          .filter(Boolean)
+          .join(' ');
 
-          return {
-            sn: index + 1,
-            name: fullName || item.name || 'N/A',
-            id: item.staff_id || item.id || '',
-            rank: item.rank || 'N/A',
-            state: item.state || 'N/A',
-            dir: item.dept || item.dir || 'N/A',
-            loc: item.location || item.loc || 'N/A'
-          };
-        });
-      }
-    } catch (err) {
-      console.warn('Supabase fetch failed or table empty, falling back to realStaffData.js:', err.message || err);
-      if (!window.realStaffData || window.realStaffData.length === 0) {
-        window.realStaffData = typeof realStaffData !== 'undefined' ? realStaffData : [];
-      }
+        return {
+          sn: index + 1,
+          name: fullName || 'N/A',
+          id: item.staff_id || item.id || '',
+          rank: item.rank || 'N/A',
+          state: item.state || 'N/A',
+          dir: item.dept || 'N/A',
+          loc: item.location || 'N/A'
+        };
+      });
+      console.log(`Successfully synced ${window.realStaffData.length} records from Supabase staff table.`);
+    }
+  } catch (err) {
+    console.warn('Supabase fetch failed. Falling back to static realStaffData.js file.', err);
+    if (!window.realStaffData || window.realStaffData.length === 0) {
+      window.realStaffData = typeof realStaffData !== 'undefined' ? realStaffData : [];
     }
   }
+}
 
   /* Master Application Initialization */
   async function init(){
