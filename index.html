@@ -8,10 +8,19 @@
   <!-- Supabase Auth SDK & Access Guard -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "https://ivzrnkdyymngghidqkyd.supabase.co";
+    // Correct Supabase URL for nafdnomrole
+    const SUPABASE_URL = "https://wzwknwosmqgxxzmdhhkm.supabase.co";
     const SUPABASE_KEY = "sb_publishable__Lh8NcOsPD8nB-tUFQ8TWg_twyCtW0V";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+  
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+      global: {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    });
+  
     // Auth Protection Guard
     (async function checkAuth() {
       const { data: { session } } = await supabaseClient.auth.getSession();
