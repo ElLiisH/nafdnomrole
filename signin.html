@@ -34,37 +34,38 @@
         <div id="error-msg" class="error"></div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = "https://wzwknwosmqgxxzmdhhkm.supabase.co";
-        const SUPABASE_KEY = "sb_publishable__Lh8NcOsPD8nB-tUFQ8TWg_twyCtW0V";
-
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        async function handleLogin() {
-            const userVal = document.getElementById('email').value.trim();
-            const passwordVal = document.getElementById('password').value.trim();
-            const errorDiv = document.getElementById('error-msg');
-
-            errorDiv.style.display = 'none';
-
-            if (!userVal || !passwordVal) {
-                errorDiv.innerText = "Please enter both email and password.";
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email: userVal,
-                password: passwordVal
-            });
-
-            if (error) {
-                errorDiv.innerText = error.message;
-                errorDiv.style.display = 'block';
-            } else {
-                window.location.href = 'index.html';
-            }
+      const SUPABASE_URL = "https://wzwknwosmqgxxzmdhhkm.supabase.co";
+      const SUPABASE_KEY = "sb_publishable_-A8sW_NQysSl-kN6GD9byA_0q-b96Q1";
+    
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+      async function handleLogin() {
+        const userVal = document.getElementById('email').value.trim();
+        const passwordVal = document.getElementById('password').value.trim();
+        const errorDiv = document.getElementById('error-msg');
+    
+        errorDiv.style.display = 'none';
+    
+        if (!userVal || !passwordVal) {
+          errorDiv.innerText = "Please enter both email and password.";
+          errorDiv.style.display = 'block';
+          return;
         }
+    
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: userVal,
+          password: passwordVal
+        });
+    
+        if (error) {
+          errorDiv.innerText = error.message;
+          errorDiv.style.display = 'block';
+        } else {
+          window.location.href = 'index.html';
+        }
+      }
     </script>
 </body>
 </html>
