@@ -1325,18 +1325,40 @@
   /* Fetch Live Data Safely from Supabase */
   async function loadLiveStaffData() {
   try {
-    // Explicitly select columns matching your schema to avoid malformed URL queries
-    const { data, error, status } = await supabaseClient
-      .from('staff')
-      .select('id, surname, first_name, other_names, rank, staff_id, state, dept, location');
+    let allData = [];
+    let page = 0;
+    const pageSize = 1000;
+    let fetchMore = true;
 
-    if (error) {
-      console.error(`Supabase API Error [Status ${status}]:`, error);
-      throw error;
+    // Loop until all 2,040 records are retrieved
+    while (fetchMore) {
+      const from = page * pageSize;
+      const to = (page + 1) * pageSize - 1;
+
+      const { data, error } = await supabaseClient
+        .from('staff')
+        .select('id, surname, first_name, other_names, rank, staff_id, state, dept, location')
+        .range(from, to);
+
+      if (error) {
+        console.error('Supabase fetch error on page', page, error);
+        throw error;
+      }
+
+      if (data && data.length > 0) {
+        allData = allData.concat(data);
+        if (data.length < pageSize) {
+          fetchMore = false; // Reached the last batch
+        } else {
+          page++;
+        }
+      } else {
+        fetchMore = false;
+      }
     }
 
-    if (data && data.length > 0) {
-      window.realStaffData = data.map((item, index) => {
+    if (allData.length > 0) {
+      window.realStaffData = allData.map((item, index) => {
         const fullName = [item.surname, item.first_name, item.other_names]
           .filter(Boolean)
           .join(' ');
@@ -1351,10 +1373,16 @@
           loc: item.location || 'N/A'
         };
       });
-      console.log(`Successfully synced ${window.realStaffData.length} records from Supabase staff table.`);
+
+      console.log(`Successfully synced all ${window.realStaffData.length} live records from Supabase.`);
+
+      // Re-initialize or refresh UI calculations if applicable
+      if (typeof renderDashboard === 'function') {
+        renderDashboard();
+      }
     }
   } catch (err) {
-    console.warn('Supabase fetch failed. Falling back to static realStaffData.js file.', err);
+    console.warn('Supabase fetch failed, falling back to local dataset:', err);
     if (!window.realStaffData || window.realStaffData.length === 0) {
       window.realStaffData = typeof realStaffData !== 'undefined' ? realStaffData : [];
     }
