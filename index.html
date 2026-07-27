@@ -762,21 +762,37 @@
   }
 
   /* Single Record Delete Function */
-  function deleteStaffRecord(staffId) {
-    const target = window.realStaffData.find(s => String(s.id) === String(staffId));
-    const staffName = target ? target.name : 'this staff member';
+  async function deleteStaffRecord(staffId) {
+  const target = window.realStaffData.find(s => String(s.id) === String(staffId));
+  const staffName = target ? target.name : 'this staff member';
 
-    if (confirm(`Are you sure you want to delete ${staffName} (ID: ${staffId}) from the nominal roll?`)) {
+  if (confirm(`Are you sure you want to delete ${staffName} (ID: ${staffId}) from the nominal roll?`)) {
+    try {
+      // 1. Await the deletion from the Supabase backend first
+      const { error } = await supabaseClient
+        .from('staff')
+        .delete()
+        .eq('staff_id', staffId); 
+
+      if (error) throw error;
+
+      // 2. Remove from local arrays only if the backend deletion succeeds
       window.realStaffData = window.realStaffData.filter(s => String(s.id) !== String(staffId));
       filteredStaff = filteredStaff.filter(s => String(s.id) !== String(staffId));
       
+      // 3. Re-render the UI
       updateCounters();
       renderDashboardCharts(currentFilter);
       renderZonalComparison(currentFilter);
       renderStaffList();
-      toast('Staff Removed', `Deleted record for ${staffName}`);
+      toast('Staff Removed', `Deleted record for ${staffName} from the database.`);
+
+    } catch (err) {
+      console.error('Supabase delete error:', err);
+      toast('Error', 'Failed to delete the record from the live database.');
     }
   }
+}
 
   function switchView(view){
     const isStaff = view === 'staff';
